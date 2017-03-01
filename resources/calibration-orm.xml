@@ -1,0 +1,117 @@
+<entity-mappings xmlns="http://mpa.io/orm/schema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://mpa.io/orm/schema orm-schema.xsd ">
+    <description>calibration definition for spectrum, ndf, linearity and
+        intensity
+    </description>
+    
+    <entity class='ala_laurila_lab.entity.AuditLog' name='audit-log'>
+        <description>Audit log structure</description>
+        <attributes>
+            <id name="id" attribute-type="int"></id>
+            
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="calibrationKey" attribute-type="string" />
+            <basic name="calibratedBy" attribute-type="string" />
+            <basic name="calibrationType" attribute-type="string" />
+            <basic name="calibrationId" attribute-type="string" />
+            <basic name="errorWithPrevious" attribute-type="double" />
+            <basic name="nextCalibrationDate" attribute-type="string" />
+        </attributes>
+    </entity>
+    
+    <entity class="ala_laurila_lab.entity.IntensityMeasurement" name="led-intensity">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            
+            <basic name="wavelength" attribute-type="double" />
+            <basic name="wavelengthExponent" attribute-type="int" />
+            <basic name="responsivity" attribute-type="double" />
+            <basic name="diameterX" attribute-type="double" />
+            <basic name="diameterY" attribute-type="double" />
+            <basic name="diameterExponent" attribute-type="int" />
+            <basic name="spotFocus" attribute-type="double" />
+            <basic name="spotFocusExponent" attribute-type="int" />
+            
+            <element-collection name="voltages"
+                       attribute-type="double" />
+            <element-collection name="voltageExponent"
+                       attribute-type="double" />
+            <element-collection name="powers" attribute-type="double" />
+            <element-collection name="powerExponent"
+                       attribute-type="double" />
+        </attributes>
+    </entity>
+    
+    <entity class="ala_laurila_lab.entity.LinearityMeasurement" name="led-linearity">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            
+            <basic name="protocol" attribute-type="string" />
+            <basic name="ledType" attribute-type="string" />
+            <basic name="stimulsDuration" attribute-type="string" />
+            
+            <element-collection name="voltages"
+                       attribute-type="double" />
+            <element-collection name="voltageExponent"
+                       attribute-type="double" />
+            <element-collection name="meanCharge"
+                       attribute-type="double" />
+            <element-collection name="stdOfCharge"
+                       attribute-type="double" />
+        </attributes>
+    </entity>
+    
+    <entity class="ala_laurila_lab.entity.NDFMeasurement" name="ndf">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            
+            <basic name="ndfName" attribute-type="string" />
+            
+            <element-collection name="voltages"
+                       attribute-type="double" />
+            <element-collection name="voltageExponent"
+                       attribute-type="double" />
+            <element-collection name="powerWithNdf"
+                       attribute-type="double" />
+            <element-collection name="powerWithNdfExponent"
+                       attribute-type="double" />
+            <element-collection name="powers" attribute-type="double" />
+            <element-collection name="powerExponent"
+                       attribute-type="double" />
+        </attributes>
+    </entity>
+    
+    <entity class="ala_laurila_lab.entity.SpectralMeasurement" name="spectrum">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            
+            <element-collection name="wavelength"
+                       attribute-type="double" />
+            <element-collection name="powerFor100mv"
+                       attribute-type="double" />
+            <element-collection name="powerFor1v"
+                       attribute-type="double" />
+            <element-collection name="powerFor5v"
+                       attribute-type="double" />
+            <element-collection name="powerFor9v"
+                       attribute-type="double" />
+        </attributes>
+    </entity>
+</entity-mappings>

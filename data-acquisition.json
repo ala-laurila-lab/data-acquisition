@@ -24,10 +24,10 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "",
-		"type": "include",
+		"toolboxRoot": "lib",
+		"type": "git",
 		"update": "",
-		"url": "https:\/\/raw.githubusercontent.com\/Schwartz-AlaLaurila-Labs\/sa-labs-analysis-core\/master\/sa-labs-analysis-core.json"
+		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/sa-labs-analysis-core.git"
 	},
     {
 		"extra": "",
@@ -69,9 +69,24 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
+		"toolboxRoot": "lib",
+		"type": "git",
+		"update": "",
+	    "url": "https:\/\/github.com\/ala-laurila-lab\/calibration-module.git"
+	},
+    {
+		"extra": "",
+		"flavor": "",
+		"hook": "",
+		"importance": "",
+		"localHookTemplate": "",
+		"name": "app-toolboxes",
+		"pathPlacement": "append",
+		"requirementHook": "",
+		"subfolder": "",
 		"toolboxRoot": "",
 		"type": "include",
 		"update": "",
-	    "url": "https:\/\/raw.githubusercontent.com\/ala-laurila-lab\/calibration-module\/master\/calibration-module.json"
+	    "url": ""
 	}
 ]
