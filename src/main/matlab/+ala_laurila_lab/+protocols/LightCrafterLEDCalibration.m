@@ -35,11 +35,12 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             obj.ledCurrentSteps = [0:1:15 20:10:100 120:20:240 255];
             calibrationProtocol = [class(obj) '-' obj.led '_' num2str(obj.stimTime)];
             
-            obj.linearityMeasurements = ala_laurila_lab.LinearityMeasurement.empty(0, numberOfCycles);
+            import ala_laurila_lab.entity.*;
+
+            obj.linearityMeasurements = LightCrafterLinearityMeasurement.empty(0, numberOfCycles);
 
             for i = 1 : obj.numberOfCycles
-                linearity = ala_laurila_lab.LinearityMeasurement(calibrationProtocol);
-                linearity.voltageExponent = 1;
+                linearity = LightCrafterLinearityMeasurement(calibrationProtocol);
                 linearity.calibrationDate = now;
                 obj.linearityMeasurements(i) = linearity;
             end
@@ -72,7 +73,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             epoch.addResponse(optometer);
             epoch.addParameter('ledCurrent', obj.ledCurrentSteps(index));
 
-            obj.linearityMeasurements(obj.cycleNumber).addVoltage(obj.ledCurrentSteps(index));
+            obj.linearityMeasurements(obj.cycleNumber).ledCurrent = obj.ledCurrentSteps(index);
         end
 
         function p = createPresentation(obj)
@@ -107,7 +108,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             start = toIndex(preTime);
             flux = quantities(start : start + toIndex(tailTime));
             
-            obj.linearityMeasurements(obj.cycleNumber).addCharge(flux);
+            obj.linearityMeasurements(obj.cycleNumber).flux = flux;
             completeEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
         end
 
