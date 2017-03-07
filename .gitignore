@@ -12,6 +12,3 @@ target/
 # Logs
 *.log
 logs/
-
-# Lib
-lib/

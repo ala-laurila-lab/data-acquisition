@@ -5,9 +5,9 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         preTime = 500           % Spot leading duration (ms)
         stimTime = 1000         % Spot duration (ms)
         tailTime = 1000         % Spot trailing duration (ms)
-        intensity = 1           % spot intensity 
+        spotIntensity = 1       % spot intensity 
         spotSize = 500;         % Spot size in (um)
-        numberOfCycles  = 1;    % number of repeats
+        numberOfCycles = 1;     % number of repeats
         led
         user
     end
@@ -37,7 +37,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             
             import ala_laurila_lab.entity.*;
 
-            obj.linearityMeasurements = LightCrafterLinearityMeasurement.empty(0, numberOfCycles);
+            obj.linearityMeasurements = LightCrafterLinearityMeasurement.empty(0, obj.numberOfCycles);
 
             for i = 1 : obj.numberOfCycles
                 linearity = LightCrafterLinearityMeasurement(calibrationProtocol);
@@ -52,14 +52,15 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             blueLed = 0;
             greenLed = 0;
             index = mod(obj.numEpochsPrepared, length(obj.blueLEDs)) + 1;           
+            ledCurrent = obj.ledCurrentSteps(index);
             
             switch (obj.led)
                 case 'blue'
-                    blueLed = obj.ledCurrentSteps(index);
+                    blueLed = ledCurrent;
                 case 'red'
-                    redLed = obj.ledCurrentSteps(index);
+                    redLed = ledCurrent;
                 case 'green'
-                    greenLed = obj.ledCurrentSteps(index);
+                    greenLed = ledCurrent;
             end
 
             lightCrafter = obj.rig.getDevice('LightCrafter');
@@ -71,16 +72,14 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
             optometer = obj.rig.getDevice('Optometer');
             epoch.addResponse(optometer);
-            epoch.addParameter('ledCurrent', obj.ledCurrentSteps(index));
+            epoch.addParameter('ledCurrent', ledCurrent);
 
-            obj.linearityMeasurements(obj.cycleNumber).ledCurrent = obj.ledCurrentSteps(index);
+            obj.linearityMeasurements(obj.cycleNumber).ledCurrent = ledCurrent;
         end
 
         function p = createPresentation(obj)
             
             p = stage.core.Presentation((obj.preTime + obj.stimTime + obj.tailTime) * 1e-3);
-
-            %set background 
             p.setBackgroundColor(obj.meanLevel);
             
             spot = stage.builtin.stimuli.Ellipse();
@@ -90,23 +89,32 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             spot.position = canvasSize / 2;
             p.addStimulus(spot);
             
-            function c = onDuringStim(state, preTime, stimTime, intensity, meanLevel)
+            function c = setColor(state, preTime, stimTime, meanLevel, intensity)
                 c = meanLevel;
-                if state.time > preTime* 1e-3 && state.time < = (preTime + stimTime) * 1e-3
+                if state.time >= preTime * 1e-3 && state.time <= (preTime + stimTime) * 1e-3
                     c = intensity;
                 end
             end
 
-            controller = stage.builtin.controllers.PropertyController(spot, 'color', @(s)onDuringStim(s, obj.preTime, obj.stimTime, obj.intensity, obj.meanLevel));
-            p.addController(controller);
+            colorController = stage.builtin.controllers.PropertyController(spot, 'color', ...
+                @(s) setColor(s, obj.preTime, obj.stimTime, obj.meanLevel, obj.spotIntensity));
+            
+            spotVisible = stage.builtin.controllers.PropertyController(spot, 'visible', ...
+                @(state) state.time >= obj.preTime * 1e-3 && state.time < (obj.preTime + obj.stimTime) * 1e-3);
+            
+            if obj.meanLevel > 0
+                p.addController(colorController);
+            else
+                p.addController(spotVisible);
+            end
         end
 
         function completeEpoch(obj, epoch)
             optometer = obj.rig.getDevice('Optometer');
             quantities = epoch.getResponse(optometer).getData();
             toIndex = @(t) (t * obj.samplingRate / 1e3);
-            start = toIndex(preTime);
-            flux = quantities(start : start + toIndex(tailTime));
+            start = toIndex(obj.preTime);
+            flux = quantities(start : start + toIndex(obj.tailTime));
             
             obj.linearityMeasurements(obj.cycleNumber).flux = flux;
             completeEpoch@sa_labs.protocols.StageProtocol(obj, epoch);

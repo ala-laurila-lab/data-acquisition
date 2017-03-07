@@ -4,6 +4,9 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         micronsPerPixel = 1.6
         frameTrackerPosition = [40, 40]
         frameTrackerSize = [80, 80]
+        
+        calibrationDataUnit = 'aalto-patch-rig-data'
+        calibrationLogUnit = 'aalto-patch-rig-data'
     end
     
     methods
@@ -22,7 +25,10 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addDevice(propertyDevice);
             propertyDevice.addConfigurationSetting('enableRstarConversion', false, 'isReadOnly', true);
             
-
+            rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
+            rigProperty.rigDescription = obj;
+            
+            
             amp1 = MultiClampDevice('Amp1', 1, 836019).bindStream(daq.getStream('ao0')).bindStream(daq.getStream('ai0'));
             obj.addDevice(amp1);
             
@@ -44,7 +50,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             ndfWheel.setConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
             ndfWheel.addResource('filterWheelAttentuationValues', obj.filterWheelAttentuationValues);
             obj.addDevice(ndfWheel);
-
+            
             trigger = UnitConvertingDevice('Oscilloscope Trigger', Measurement.UNITLESS).bindStream(daq.getStream('doport0'));
             daq.getStream('doport0').setBitPosition(trigger, 0);
             obj.addDevice(trigger);
@@ -52,7 +58,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             rigSwitch1 = UnitConvertingDevice('rigSwitch1', Measurement.UNITLESS).bindStream(daq.getStream('diport1'));
             daq.getStream('diport1').setBitPosition(rigSwitch1, 0);
             obj.addDevice(rigSwitch1);
-                        
+            
             rigSwitch2 = UnitConvertingDevice('rigSwitch2', Measurement.UNITLESS).bindStream(daq.getStream('diport1'));
             daq.getStream('diport1').setBitPosition(rigSwitch2, 1);
             obj.addDevice(rigSwitch2);
@@ -60,13 +66,17 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             rigSwitch3 = UnitConvertingDevice('rigSwitch3', Measurement.UNITLESS).bindStream(daq.getStream('diport1'));
             daq.getStream('diport1').setBitPosition(rigSwitch3, 2);
             obj.addDevice(rigSwitch3);
-                        
+            
             rigSwitch4 = UnitConvertingDevice('rigSwitch4', Measurement.UNITLESS).bindStream(daq.getStream('diport1'));
             daq.getStream('diport1').setBitPosition(rigSwitch4, 3);
             obj.addDevice(rigSwitch4);
         end
         
+       function service = getCalibrationService(obj)
+            service = ala_laurila_lab.factory.getInstance('calibrationService');
+            service.dataPersistence = obj.calibrationDataUnit;
+            service.logPersistence = obj.calibrationLogUnit;
+       end
     end
-    
 end
 
