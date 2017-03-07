@@ -1,7 +1,7 @@
 function [instance, ctxt] = getInstance(name)
 
 instance = [];
-persistence context;
+persistent context;
 try
     if isempty(context)
         context = mdepin.getBeanFactory(which('AcquisitionContext.m'));
@@ -13,7 +13,7 @@ try
     instance = context.getBean(name);
     
 catch exception
-    disp(exception.message);
+    disp(['Error getting instance (' name ') ' exception.message]);
 end
 ctxt = context;
 end

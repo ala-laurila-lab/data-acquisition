@@ -1,4 +1,4 @@
-classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
+classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtocol
 
     properties
         

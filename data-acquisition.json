@@ -11,7 +11,7 @@
 		"subfolder": "",
 		"toolboxRoot": "",
 		"type": "git",
-		"update": "",
+		"update": "never",
 		"url": "https:\/\/github.com\/ala-laurila-lab\/data-acquisition.git"
 	},
     {
@@ -26,7 +26,7 @@
 		"subfolder": "",
 		"toolboxRoot": ".lib",
 		"type": "git",
-		"update": "",
+		"update": "never",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/sa-labs-analysis-core.git"
 	},
     {
@@ -41,7 +41,7 @@
 		"subfolder": "",
 		"toolboxRoot": ".lib",
 		"type": "git",
-		"update": "",
+		"update": "never",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/sa-labs-extension.git"
 	},
     {
@@ -56,7 +56,7 @@
 		"subfolder": "",
 		"toolboxRoot": ".lib",
 		"type": "git",
-		"update": "",
+		"update": "never",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/matlab-lcr.git"
 	},
     {
@@ -71,7 +71,7 @@
 		"subfolder": "",
 		"toolboxRoot": ".lib",
 		"type": "git",
-		"update": "",
+		"update": "never",
 	    "url": "https:\/\/github.com\/ala-laurila-lab\/calibration-module.git"
 	},
     {
@@ -86,7 +86,7 @@
 		"subfolder": "",
 		"toolboxRoot": "",
 		"type": "include",
-		"update": "",
+		"update": "never",
 	    "url": ""
 	}
 ]

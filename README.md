@@ -8,7 +8,8 @@ It uses [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox) for depen
 
 1. Download and install ToolboxToolbox from above link
 2. Download the [startup.m](https://gist.github.com/ragavsathish/e4e58150c8a6c8ffe95b0ef632715fbe) and save it in MATLAB user path.
-3. To update `tbUseProject('data-acquisition')`
+3. git clone  `https://github.com/ala-laurila-lab/data-acquisition.git` into  `projects/data-acquistion`
+4. To update `tbUseProject('data-acquisition')`
 
 ### Folder organization
 
@@ -17,7 +18,7 @@ It uses [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox) for depen
 
 ### Usage
 
-1. Add the `src\main\matlab` and `lib` to symphony class path settings
+1. Add the `src\main\matlab` and `.lib` to symphony class path settings
 2. Restart the Symphony
 
 
