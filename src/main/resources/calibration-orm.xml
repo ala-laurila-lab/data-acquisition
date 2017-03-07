@@ -70,7 +70,7 @@
         </attributes>
     </entity>
     
-        <entity class="LightCrafterLinearityMeasurement" name="lcr-linearity">
+        <entity class="ala_laurila_lab.entity.LightCrafterLinearityMeasurement" name="lcr-linearity">
         <attributes>
             <id name="id" attribute-type="string">
                 <field>mpa.fields.DateTime</field>
