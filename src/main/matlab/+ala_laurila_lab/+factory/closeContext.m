@@ -1,7 +1,7 @@
 function closeContext()
 
-    ctxt = getInstance([]);
-    clear(ctxt);
+    ctxt = ala_laurila_lab.factory.getInstance('');
+    clear('ctxt');
 
 end
 

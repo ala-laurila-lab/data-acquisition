@@ -9,8 +9,8 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         calibrationLogUnit = 'aalto-patch-rig-data'
         
         filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
-        filterWheelAttentuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
-        
+        filterWheelAttenuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
+        filterWheelDefaultValue = 3;
     end
     
     methods
@@ -32,6 +32,10 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
             rigProperty.rigDescription = obj;
             
+            obj.prepareRigDescription();
+        end
+        
+        function prepareRigDescription(obj)
             obj.addAmplifier();
             obj.addProjector();
             obj.addRigSwitches();
@@ -99,7 +103,9 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         function addFilterWheel(obj)
             ndfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice('COM11');
             ndfWheel.setConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
-            ndfWheel.addResource('filterWheelAttentuationValues', obj.filterWheelAttentuationValues);
+            ndfWheel.addResource('filterWheelAttenuationValues', obj.filterWheelAttenuationValues);
+            ndfWheel.addResource('defaultNdfValue', obj.filterWheelDefaultValue);
+        
             obj.addDevice(ndfWheel);
         end
         

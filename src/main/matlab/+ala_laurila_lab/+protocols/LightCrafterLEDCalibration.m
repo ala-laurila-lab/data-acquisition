@@ -1,5 +1,5 @@
-classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtocol
-
+classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
+    
     properties
         
         preTime = 500           % Spot leading duration (ms)
@@ -8,8 +8,7 @@ classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtoco
         spotIntensity = 1       % spot intensity 
         spotSize = 500;         % Spot size in (um)
         numberOfCycles = 1;     % number of repeats
-        led
-        user
+        user = 'Anna'
     end
     
     
@@ -20,20 +19,23 @@ classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtoco
 
     properties (Hidden, Transient)
         ledCurrentSteps
-        ledType = symphonyui.core.PropertyType('char', 'row', {'red', 'blue', 'green'})
-        userType = symphonyui.core.PropertyType('char', 'row', {'Sathish', 'Anna', 'Petri'})
         linearityMeasurements
+        rigProperty
+    end
+    
+    properties (Hidden)
+        userType = symphonyui.core.PropertyType('char', 'row', {'Anna', 'Petri', 'Sathish', 'Sami'})
+        responsePlotMode = false
     end
     
     methods
         
         function prepareRun(obj)
-            prepareRun@sa_labs.protocols.StageProtocol(obj);
-            obj.showFigure('symphonyui.builtin.figures.ResponseFigure', obj.rig.getDevice('Optometer'));
+            % obj.showFigure('symphonyui.builtin.figures.ResponseFigure', obj.rig.getDevice('Optometer'));
             
             % set LED current vector
             obj.ledCurrentSteps = [0:1:15 20:10:100 120:20:240 255];
-            calibrationProtocol = [class(obj) '-' obj.led '_' num2str(obj.stimTime)];
+            calibrationProtocol = [class(obj) '-blueLed_' num2str(obj.stimTime)];
             
             import ala_laurila_lab.entity.*;
 
@@ -41,30 +43,20 @@ classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtoco
 
             for i = 1 : obj.numberOfCycles
                 linearity = LightCrafterLinearityMeasurement(calibrationProtocol);
-                linearity.calibrationDate = now;
+                linearity.calibrationDate = datestr(date, 'dd/mm/yyyy');
                 obj.linearityMeasurements(i) = linearity;
             end
+            obj.rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
+            prepareRun@sa_labs.protocols.StageProtocol(obj);
         end
 
         function prepareEpoch(obj, epoch)
 
-            redLed = 0;
-            blueLed = 0;
-            greenLed = 0;
             index = mod(obj.numEpochsPrepared, length(obj.blueLEDs)) + 1;           
             ledCurrent = obj.ledCurrentSteps(index);
             
-            switch (obj.led)
-                case 'blue'
-                    blueLed = ledCurrent;
-                case 'red'
-                    redLed = ledCurrent;
-                case 'green'
-                    greenLed = ledCurrent;
-            end
-
             lightCrafter = obj.rig.getDevice('LightCrafter');
-            lightCrafter.setLedCurrents(redLed, greenLed, blueLed);
+            lightCrafter.setLedCurrents(0, 0, ledCurrent, 0);
 
             % let the projector get set up
             pause(0.2); 
@@ -121,7 +113,7 @@ classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtoco
         end
 
         function completeRun(obj)
-            service = ala_laurila_lab.AaltoPatchRigCailbration.getCalibrationService();
+            service = obj.rigProperty.rigDescription.getCalibrationService();
             service.addLinearityMeasurement(obj.linearityMeasurements, obj.user);
             
             completeRun@sa_labs.protocols.StageProtocol(obj, epoch);           
@@ -133,6 +125,12 @@ classdef LightCrafterLEDCalibration < io.github.stage_vss.protocols.StageProtoco
 
         function n = get.cycleNumber(obj)
             n = (obj.totalNumEpochs / length(obj.ledCurrentSteps)) + 1;
+        end
+        
+        function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, intensity)
+            rstar = [];
+            mstar = [];
+            sstar = [];
         end
     end
 end

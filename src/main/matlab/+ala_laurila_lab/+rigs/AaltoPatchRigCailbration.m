@@ -1,9 +1,11 @@
 classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRig
-      
+    
     methods
         
-        function addAmplifier(~)
-            % no need to power on amps for stimuls calibration
+        function prepareRigDescription(obj)
+            obj.addProjector();
+            obj.addRigSwitches();
+            obj.addFilterWheel();
         end
     end
 end
