@@ -6,7 +6,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         frameTrackerSize = [80, 80]
         
         calibrationDataUnit = 'aalto-patch-rig-data'
-        calibrationLogUnit = 'aalto-patch-rig-data'
+        calibrationLogUnit = 'aalto-patch-rig-log'
         
         filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
         filterWheelAttenuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];

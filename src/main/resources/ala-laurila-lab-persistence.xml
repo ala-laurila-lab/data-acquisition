@@ -12,7 +12,7 @@
 		<class>ala_laurila_lab.entity.NDFMeasurement</class>
 		<properties>
 			<property name="local-path"
-				value="<>" />
+				value="" />
 			<property name="remote-path" value="" />
 			<property name="create-mode" value="true" />
 			<property name="use-cache" value="false" />
@@ -39,6 +39,7 @@
 		<class>ala_laurila_lab.entity.LinearityMeasurement</class>
 		<class>ala_laurila_lab.entity.SpectralMeasurement</class>
 		<class>ala_laurila_lab.entity.NDFMeasurement</class>
+        <class>ala_laurila_lab.entity.LightCrafterLinearityMeasurement</class>
 		<properties>
 			<property name="local-path"
 				value="C:\Users\labadmin\Documents\MATLAB\calibration-data\aalto-rig-D.h5" />
@@ -49,7 +50,7 @@
 	</persistence-unit>
 
 	<persistence-unit name="aalto-patch-rig-log">
-		<mapping-file>test-calibration-orm.xml</mapping-file>
+		<mapping-file>calibration-orm.xml</mapping-file>
 		<provider>mpa.mat.SimpleMatlabProvider</provider>
 		<class>ala_laurila_lab.entity.AuditLog</class>
 		<properties>
@@ -70,7 +71,7 @@
 		<class>ala_laurila_lab.entity.NDFMeasurement</class>
 		<properties>
 			<property name="local-path"
-				value="<>" />
+				value="" />
 			<property name="remote-path" value="" />
 			<property name="create-mode" value="true" />
 			<property name="use-cache" value="false" />
@@ -83,7 +84,7 @@
 		<class>ala_laurila_lab.entity.AuditLog</class>
 		<properties>
 			<property name="local-path"
-				value="<>" />
+				value="" />
 			<property name="remote-path" value="" />
 			<property name="create-mode" value="true" />
 			<property name="use-cache" value="false" />
