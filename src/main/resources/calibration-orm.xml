@@ -70,6 +70,27 @@
         </attributes>
     </entity>
     
+        <entity class="LightCrafterLinearityMeasurement" name="lcr-linearity">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            
+            <basic name="protocol" attribute-type="string" />
+            <basic name="ledType" attribute-type="string" />
+            <basic name="stimulsDuration" attribute-type="string" />
+            
+            <element-collection name="ledCurrent"
+                       attribute-type="double" />
+            <element-collection name="flux"
+                       attribute-type="double" />
+            <element-collection name="stdOfCharge"
+                       attribute-type="double" />
+        </attributes>
+    </entity>
+    
     <entity class="ala_laurila_lab.entity.NDFMeasurement" name="ndf">
         <attributes>
             <id name="id" attribute-type="string">
