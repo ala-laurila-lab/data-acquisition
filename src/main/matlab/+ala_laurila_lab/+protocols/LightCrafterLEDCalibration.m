@@ -9,6 +9,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         spotSize = 500;         % Spot size in (um)
         numberOfCycles = 1;     % number of repeats
         user = 'Anna'
+        ledCurrentSteps = 0 : 255
     end
     
     
@@ -18,7 +19,6 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
     end
 
     properties (Hidden, Transient)
-        ledCurrentSteps
         linearityMeasurements
         rigProperty
     end
@@ -34,16 +34,17 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             % obj.showFigure('symphonyui.builtin.figures.ResponseFigure', obj.rig.getDevice('Optometer'));
             
             % set LED current vector
-            obj.ledCurrentSteps = [0:1:15 20:10:100 120:20:240 255];
-            calibrationProtocol = [class(obj) '-blueLed_' num2str(obj.stimTime)];
+            % obj.ledCurrentSteps = 0 : 255;
+            calibrationProtocol = ['LCRBlueLed_' num2str(obj.stimTime)];
             
             import ala_laurila_lab.entity.*;
 
-            obj.linearityMeasurements = LightCrafterLinearityMeasurement.empty(0, obj.numberOfCycles);
+            obj.linearityMeasurements = LinearityMeasurement.empty(0, obj.numberOfCycles);
 
             for i = 1 : obj.numberOfCycles
-                linearity = LightCrafterLinearityMeasurement(calibrationProtocol);
+                linearity = LinearityMeasurement(calibrationProtocol);
                 linearity.calibrationDate = datestr(date, 'dd/mm/yyyy');
+                linearity.stimulsSize = obj.spotSize;
                 obj.linearityMeasurements(i) = linearity;
             end
             obj.rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
@@ -52,7 +53,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
 
         function prepareEpoch(obj, epoch)
 
-            index = mod(obj.numEpochsPrepared, length(obj.blueLEDs)) + 1;           
+            index = mod(obj.numEpochsPrepared, length(obj.ledCurrentSteps)) + 1;           
             ledCurrent = obj.ledCurrentSteps(index);
             
             lightCrafter = obj.rig.getDevice('LightCrafter');
@@ -60,13 +61,12 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
 
             % let the projector get set up
             pause(0.2); 
-
-            prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
             optometer = obj.rig.getDevice('Optometer');
             epoch.addResponse(optometer);
             epoch.addParameter('ledCurrent', ledCurrent);
 
-            obj.linearityMeasurements(obj.cycleNumber).ledCurrent = ledCurrent;
+            obj.linearityMeasurements(obj.cycleNumber).addLedInput(ledCurrent);
+            prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
         end
 
         function p = createPresentation(obj)
@@ -104,11 +104,11 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         function completeEpoch(obj, epoch)
             optometer = obj.rig.getDevice('Optometer');
             quantities = epoch.getResponse(optometer).getData();
-            toIndex = @(t) (t * obj.samplingRate / 1e3);
+            toIndex = @(t) (t * obj.sampleRate / 1e3);
             start = toIndex(obj.preTime);
             flux = quantities(start : start + toIndex(obj.tailTime));
+            obj.linearityMeasurements(obj.cycleNumber).addFlux(flux);
             
-            obj.linearityMeasurements(obj.cycleNumber).flux = flux;
             completeEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
         end
 
@@ -116,7 +116,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
             service = obj.rigProperty.rigDescription.getCalibrationService();
             service.addLinearityMeasurement(obj.linearityMeasurements, obj.user);
             
-            completeRun@sa_labs.protocols.StageProtocol(obj, epoch);           
+            completeRun@sa_labs.protocols.StageProtocol(obj);           
         end
         
         function totalNumEpochs = get.totalNumEpochs(obj)
@@ -124,7 +124,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         end
 
         function n = get.cycleNumber(obj)
-            n = (obj.totalNumEpochs / length(obj.ledCurrentSteps)) + 1;
+            n = floor(obj.numEpochsCompleted / length(obj.ledCurrentSteps)) + 1;
         end
         
         function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, intensity)

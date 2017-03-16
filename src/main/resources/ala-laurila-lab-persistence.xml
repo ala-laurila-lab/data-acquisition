@@ -1,94 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1"
-	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence persistence_2_1.xsd">
-
-	<persistence-unit name="viiki-patch-rig-data">
-		<mapping-file>calibration-orm.xml</mapping-file>
-		<provider>mpa.h5.H5MatlabProvider</provider>
-		<class>ala_laurila_lab.entity.IntensityMeasurement</class>
-		<class>ala_laurila_lab.entity.LinearityMeasurement</class>
-		<class>ala_laurila_lab.entity.SpectralMeasurement</class>
-		<class>ala_laurila_lab.entity.NDFMeasurement</class>
-		<properties>
-			<property name="local-path"
-				value="" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
-
-	<persistence-unit name="viiki-patch-rig-log">
-		<mapping-file>calibration-orm.xml</mapping-file>
-		<provider>mpa.mat.SimpleMatlabProvider</provider>
-		<class>ala_laurila_lab.entity.AuditLog</class>
-		<properties>
-			<property name="local-path"
-				value="" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
+             xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence persistence_2_1.xsd">
     
-    	<persistence-unit name="aalto-patch-rig-data">
-		<mapping-file>calibration-orm.xml</mapping-file>
-		<provider>mpa.h5.H5MatlabProvider</provider>
-		<class>ala_laurila_lab.entity.IntensityMeasurement</class>
-		<class>ala_laurila_lab.entity.LinearityMeasurement</class>
-		<class>ala_laurila_lab.entity.SpectralMeasurement</class>
-		<class>ala_laurila_lab.entity.NDFMeasurement</class>
+    <persistence-unit name="viiki-patch-rig-data">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.h5.H5MatlabProvider</provider>
+        <class>ala_laurila_lab.entity.IntensityMeasurement</class>
+        <class>ala_laurila_lab.entity.LinearityMeasurement</class>
+        <class>ala_laurila_lab.entity.SpectralMeasurement</class>
+        <class>ala_laurila_lab.entity.NDFMeasurement</class>
+        <properties>
+            <property name="local-path"
+             value="" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="viiki-patch-rig-log">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.mat.SimpleMatlabProvider</provider>
+        <class>ala_laurila_lab.entity.AuditLog</class>
+        <properties>
+            <property name="local-path"
+             value="" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="aalto-patch-rig-data">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.h5.H5MatlabProvider</provider>
+        <class>ala_laurila_lab.entity.IntensityMeasurement</class>
+        <class>ala_laurila_lab.entity.LinearityMeasurement</class>
+        <class>ala_laurila_lab.entity.SpectralMeasurement</class>
+        <class>ala_laurila_lab.entity.NDFMeasurement</class>
         <class>ala_laurila_lab.entity.LightCrafterLinearityMeasurement</class>
-		<properties>
-			<property name="local-path"
-				value="C:\Users\labadmin\Documents\MATLAB\calibration-data\aalto-rig-D.h5" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
-
-	<persistence-unit name="aalto-patch-rig-log">
-		<mapping-file>calibration-orm.xml</mapping-file>
-		<provider>mpa.mat.SimpleMatlabProvider</provider>
-		<class>ala_laurila_lab.entity.AuditLog</class>
-		<properties>
-			<property name="local-path"
-				value="C:\Users\labadmin\Documents\MATLAB\calibration-data\" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
+        <properties>
+            <property name="local-path"
+             value="C:\Users\labadmin\Documents\MATLAB\calibration-data\aalto-rig-D.h5" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
     
-    	<persistence-unit name="viki-suction-rig-data">
-		<mapping-file>test-calibration-orm.xml</mapping-file>
-		<provider>mpa.h5.H5MatlabProvider</provider>
+    <persistence-unit name="aalto-patch-rig-log">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.mat.SimpleMatlabProvider</provider>
+        <class>ala_laurila_lab.entity.AuditLog</class>
+        <properties>
+            <property name="local-path"
+             value="C:\Users\labadmin\Documents\MATLAB\calibration-data\" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="viki-suction-rig-data">
+        <mapping-file>test-calibration-orm.xml</mapping-file>
+        <provider>mpa.h5.H5MatlabProvider</provider>
+        <class>ala_laurila_lab.entity.IntensityMeasurement</class>
+        <class>ala_laurila_lab.entity.LinearityMeasurement</class>
+        <class>ala_laurila_lab.entity.SpectralMeasurement</class>
+        <class>ala_laurila_lab.entity.NDFMeasurement</class>
+        <properties>
+            <property name="local-path"
+             value="" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="viki-suction-rig-log">
+        <mapping-file>test-calibration-orm.xml</mapping-file>
+        <provider>mpa.mat.SimpleMatlabProvider</provider>
+        <class>ala_laurila_lab.entity.AuditLog</class>
+        <properties>
+            <property name="local-path"
+             value="" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="simulated-rig-data">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.h5.H5MatlabProvider</provider>
 		<class>ala_laurila_lab.entity.IntensityMeasurement</class>
 		<class>ala_laurila_lab.entity.LinearityMeasurement</class>
-		<class>ala_laurila_lab.entity.SpectralMeasurement</class>
+		<class>ala_laurila_lab.entity.LEDSpectrum</class>
+        <class>ala_laurila_lab.entity.ProjectorSpectrum</class>
 		<class>ala_laurila_lab.entity.NDFMeasurement</class>
-		<properties>
-			<property name="local-path"
-				value="" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
-
-	<persistence-unit name="viki-suction-rig-log">
-		<mapping-file>test-calibration-orm.xml</mapping-file>
-		<provider>mpa.mat.SimpleMatlabProvider</provider>
-		<class>ala_laurila_lab.entity.AuditLog</class>
-		<properties>
-			<property name="local-path"
-				value="" />
-			<property name="remote-path" value="" />
-			<property name="create-mode" value="true" />
-			<property name="use-cache" value="false" />
-		</properties>
-	</persistence-unit>
+        <properties>
+            <property name="local-path"
+             value="fixtures\calibration-data\simulated-rig.h5" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
     
+    <persistence-unit name="simulated-rig-log">
+        <mapping-file>calibration-orm.xml</mapping-file>
+        <provider>mpa.mat.SimpleMatlabProvider</provider>
+        <class>ala_laurila_lab.entity.AuditLog</class>
+        <properties>
+            <property name="local-path"
+             value="fixtures\calibration-data\" />
+            <property name="remote-path" value="" />
+            <property name="create-mode" value="true" />
+            <property name="use-cache" value="false" />
+        </properties>
+    </persistence-unit>
 </persistence>

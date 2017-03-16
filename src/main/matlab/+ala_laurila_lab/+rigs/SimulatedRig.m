@@ -13,6 +13,9 @@ classdef SimulatedRig < ala_laurila_lab.rigs.AaltoPatchRig
             
             rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
             rigProperty.testMode = true;
+            
+            obj.calibrationDataUnit = 'simulated-rig-data';
+            obj.calibrationLogUnit = 'simulated-rig-log';
         end
         
         function prepareRigDescription(obj)

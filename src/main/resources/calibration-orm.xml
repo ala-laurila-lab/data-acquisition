@@ -34,16 +34,17 @@
             <basic name="diameterX" attribute-type="double" />
             <basic name="diameterY" attribute-type="double" />
             <basic name="diameterExponent" attribute-type="int" />
-            <basic name="spotFocus" attribute-type="double" />
-            <basic name="spotFocusExponent" attribute-type="int" />
+            <basic name="stageFocus" attribute-type="double" />
+            <basic name="stageFocusExponent" attribute-type="int" />
+            <basic name="referenceInput" attribute-type="double" />
             
-            <element-collection name="voltages"
-                       attribute-type="double" />
-            <element-collection name="voltageExponent"
-                       attribute-type="double" />
+            <element-collection name="ledInput"
+                                attribute-type="double" />
+            <element-collection name="ledInputExponent"
+                                attribute-type="double" />
             <element-collection name="powers" attribute-type="double" />
             <element-collection name="powerExponent"
-                       attribute-type="double" />
+                                attribute-type="double" />
         </attributes>
     </entity>
     
@@ -54,40 +55,20 @@
             </id>
             <basic name="calibrationDate" attribute-type="string" />
             <basic name="note" attribute-type="string" />
-            
+            <basic name="stimulsSize" attribute-type="double" />
             <basic name="protocol" attribute-type="string" />
             <basic name="ledType" attribute-type="string" />
             <basic name="stimulsDuration" attribute-type="string" />
+            <basic name="referenceInput" attribute-type="double" />
             
-            <element-collection name="voltages"
-                       attribute-type="double" />
-            <element-collection name="voltageExponent"
-                       attribute-type="double" />
-            <element-collection name="meanCharge"
-                       attribute-type="double" />
-            <element-collection name="stdOfCharge"
-                       attribute-type="double" />
-        </attributes>
-    </entity>
-    
-        <entity class="ala_laurila_lab.entity.LightCrafterLinearityMeasurement" name="lcr-linearity">
-        <attributes>
-            <id name="id" attribute-type="string">
-                <field>mpa.fields.DateTime</field>
-            </id>
-            <basic name="calibrationDate" attribute-type="string" />
-            <basic name="note" attribute-type="string" />
-            
-            <basic name="protocol" attribute-type="string" />
-            <basic name="ledType" attribute-type="string" />
-            <basic name="stimulsDuration" attribute-type="string" />
-            
-            <element-collection name="ledCurrent"
-                       attribute-type="double" />
-            <element-collection name="flux"
-                       attribute-type="double" />
-            <element-collection name="stdOfCharge"
-                       attribute-type="double" />
+            <element-collection name="ledInput"
+                                attribute-type="double" />
+            <element-collection name="ledInputExponent"
+                                attribute-type="double" />
+            <element-collection name="meanFlux"
+                                attribute-type="double" />
+            <element-collection name="stdOfFlux"
+                                attribute-type="double" />
         </attributes>
     </entity>
     
@@ -98,41 +79,64 @@
             </id>
             <basic name="calibrationDate" attribute-type="string" />
             <basic name="note" attribute-type="string" />
-            
+            <basic name="referenceInput" attribute-type="double" />
             <basic name="ndfName" attribute-type="string" />
             
-            <element-collection name="voltages"
-                       attribute-type="double" />
-            <element-collection name="voltageExponent"
-                       attribute-type="double" />
+            <element-collection name="ledInput"
+                                attribute-type="double" />
+            <element-collection name="ledInputExponent"
+                                attribute-type="double" />
             <element-collection name="powerWithNdf"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powerWithNdfExponent"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powers" attribute-type="double" />
             <element-collection name="powerExponent"
-                       attribute-type="double" />
+                                attribute-type="double" />
         </attributes>
     </entity>
     
-    <entity class="ala_laurila_lab.entity.SpectralMeasurement" name="spectrum">
+    <entity class="ala_laurila_lab.entity.LEDSpectrum" name="led-spectrum">
         <attributes>
             <id name="id" attribute-type="string">
                 <field>mpa.fields.DateTime</field>
             </id>
             <basic name="calibrationDate" attribute-type="string" />
             <basic name="note" attribute-type="string" />
+            <basic name="referenceInput" attribute-type="double" />
             
             <element-collection name="wavelength"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powerFor100mv"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powerFor1v"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powerFor5v"
-                       attribute-type="double" />
+                                attribute-type="double" />
             <element-collection name="powerFor9v"
-                       attribute-type="double" />
+                                attribute-type="double" />
+        </attributes>
+    </entity>
+    <entity class="ala_laurila_lab.entity.ProjectorSpectrum" name="led-spectrum">
+        <attributes>
+            <id name="id" attribute-type="string">
+                <field>mpa.fields.DateTime</field>
+            </id>
+            <basic name="calibrationDate" attribute-type="string" />
+            <basic name="note" attribute-type="string" />
+            <basic name="referenceInput" attribute-type="double" />
+             <basic name="referenceSize" attribute-type="double" />
+             
+            <element-collection name="wavelength"
+                                attribute-type="double" />
+            <element-collection name="powerFor12LedCurrent50um"
+                                attribute-type="double" />
+            <element-collection name="powerFor12LedCurrent125um"
+                                attribute-type="double" />
+            <element-collection name="powerFor12LedCurrent250um"
+                                attribute-type="double" />
+            <element-collection name="powerFor12LedCurrent500um"
+                                attribute-type="double" />
         </attributes>
     </entity>
 </entity-mappings>
