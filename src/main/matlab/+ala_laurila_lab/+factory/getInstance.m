@@ -8,6 +8,7 @@ try
     end
     
     if isempty(name)
+        ctxt = context;
         return
     end
     instance = context.getBean(name);

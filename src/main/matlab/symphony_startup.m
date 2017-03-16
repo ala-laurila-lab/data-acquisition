@@ -1,0 +1,14 @@
+% Because of slower startup time with 
+%   tbUseProject('data-acquisition', 'online', false);
+% loading dependecy in a manual way
+
+depdendency = {'mdepin', 'matlab-tree', 'logging4matlab', 'MatlabQuery'};
+tbAddToPath(tbLocateProject('data-acquisition'));
+cellfun(@(d) tbAddToPath(tbLocateToolbox(d)), depdendency, 'UniformOutput', false);
+
+% start the stage server if the second instance is not running
+
+[~, result] = system('tasklist /FI "imagename eq matlab.exe" /fo table /nh');
+if length(regexpi(result, '\w*Matlab.exe\w*')) < 2
+    !matlab -nodesktop -nosplash -r "info = matlab.apputil.getInstalledAppInfo; addpath(genpath(info(ismember({info.name}, 'Symphony')).location)); tbAddToPath(tbLocateProject('data-acquisition')); matlab.apputil.run(info(ismember({info.name}, 'Stage Server')).id);" &
+end

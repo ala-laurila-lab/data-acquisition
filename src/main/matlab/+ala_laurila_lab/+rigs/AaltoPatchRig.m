@@ -15,13 +15,15 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
     
     methods
         
-        function obj = AaltoPatchRig()
+        function obj = AaltoPatchRig(daq)
             
             import symphonyui.builtin.daqs.*;
             import symphonyui.builtin.devices.*;
             import symphonyui.core.*;
             
-            daq = HekaDaqController(HekaDeviceType.ITC1600);
+            if nargin < 1
+                daq = HekaDaqController(HekaDeviceType.ITC1600);
+            end
             obj.daqController = daq;
             
             % TODO check alternative way to configure properties
