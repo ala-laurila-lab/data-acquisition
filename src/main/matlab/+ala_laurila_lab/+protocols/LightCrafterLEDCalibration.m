@@ -44,7 +44,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
                 linearity.referenceInput = 100;
                 obj.linearityMeasurements(i) = linearity;
             end
-            obj.rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
+            obj.rigProperty = sa_labs.factory.getInstance('rigProperty');
             prepareRun@sa_labs.protocols.StageProtocol(obj);
         end
 

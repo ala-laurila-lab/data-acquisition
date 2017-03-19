@@ -1,8 +1,8 @@
-classdef SimulatedRig < ala_laurila_lab.rigs.AaltoPatchRig
+classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
     
     methods
         
-        function obj = SimulatedRig()
+        function obj = SimulatedRigAlaLaurilaLab()
             
             import symphonyui.builtin.daqs.*;
             import symphonyui.builtin.devices.*;
@@ -11,7 +11,7 @@ classdef SimulatedRig < ala_laurila_lab.rigs.AaltoPatchRig
             daq = HekaSimulationDaqController();
             obj = obj@ala_laurila_lab.rigs.AaltoPatchRig(daq);
             
-            rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
+            rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.testMode = true;
             
             obj.calibrationDataUnit = 'simulated-rig-data';

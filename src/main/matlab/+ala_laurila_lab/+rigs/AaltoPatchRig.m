@@ -31,7 +31,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addDevice(propertyDevice);
             propertyDevice.addConfigurationSetting('enableRstarConversion', false, 'isReadOnly', true);
             
-            rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
+            rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.rigDescription = obj;
             
             obj.prepareRigDescription();
@@ -107,14 +107,37 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             ndfWheel.setConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
             ndfWheel.addResource('filterWheelAttenuationValues', obj.filterWheelAttenuationValues);
             ndfWheel.addResource('defaultNdfValue', obj.filterWheelDefaultValue);
-        
+            
             obj.addDevice(ndfWheel);
         end
         
         function service = getCalibrationService(obj)
-            service = ala_laurila_lab.factory.getInstance('calibrationService');
+            service = sa_labs.factory.getInstance('calibrationService');
             service.dataPersistence = obj.calibrationDataUnit;
             service.logPersistence = obj.calibrationLogUnit;
+        end
+        
+        function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, parameter, mouse)
+            import ala_laurila_lab.*;
+            service = obj.getCalibrationService;
+            
+            powerPerUnitArea = service.getIntensityMeasurement(parameter.ledType).getPowerPerUnitArea();
+            spectrum = service.getSpectralMeasurement(parameter.ledType);
+            ndf = service.getNDFMeasurement(parameter.ndf);
+            linearity = service.getLinearityByStimulsDuration(parameter.duration, parameter.ledType);
+            
+            powerSpectrumPerArea = spectrum.getNormalizedPowerSpectrum() * powerPerUnitArea;
+            flux = linearity.getFluxByInput(parameter.ledCurrent, 'normalized', true);
+            trans =  10^(-ndf.opticalDensity);
+            
+            rstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_ROD, mouse.ROD_PHOTORECEPTOR_AREA);
+            mstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_MCONE, mouse.CONE_PHOTORECEPTOR_AREA);
+            sstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_SCONE, mouse.CONE_PHOTORECEPTOR_AREA);
+            
+            isomerisation = @(isomerisationPerSecond) flux * isomerisationPerSecond * trans * parameter.duration;
+            rstar = isomerisation(rstarPerSecond);
+            mstar = isomerisation(mstarPerSecond);
+            sstar = isomerisation(sstarPerSecond);
         end
     end
 end
