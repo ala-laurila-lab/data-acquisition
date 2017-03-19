@@ -11,6 +11,8 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
         filterWheelAttenuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
         filterWheelDefaultValue = 3;
+        
+        projectorColorMode = 'standard'
     end
     
     methods
@@ -67,6 +69,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             lightCrafter = sa_labs.devices.LightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
+            lightCrafter.setConfigurationSetting('angleOffset',  [0, 0]);
             obj.addDevice(lightCrafter);
         end
         
@@ -117,27 +120,47 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             service.logPersistence = obj.calibrationLogUnit;
         end
         
-        function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, parameter, mouse)
+        function [rstar, mstar, sstar] = getIsomerizations(obj, intensity, parameter)
             import ala_laurila_lab.*;
             service = obj.getCalibrationService;
             
-            powerPerUnitArea = service.getIntensityMeasurement(parameter.ledType).getPowerPerUnitArea();
-            spectrum = service.getSpectralMeasurement(parameter.ledType);
+            rstar = [];
+            mstar = [];
+            sstar = [];
+            
             ndf = service.getNDFMeasurement(parameter.ndf);
-            linearity = service.getLinearityByStimulsDuration(parameter.duration, parameter.ledType);
             
-            powerSpectrumPerArea = spectrum.getNormalizedPowerSpectrum() * powerPerUnitArea;
-            flux = linearity.getFluxByInput(parameter.ledCurrent, 'normalized', true);
-            trans =  10^(-ndf.opticalDensity);
+            if isempty(parameter.mouse)
+                return;
+            end
             
-            rstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_ROD, mouse.ROD_PHOTORECEPTOR_AREA);
-            mstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_MCONE, mouse.CONE_PHOTORECEPTOR_AREA);
-            sstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse.LAMDA_MAX_SCONE, mouse.CONE_PHOTORECEPTOR_AREA);
+            % TODO if below code is computationaly intensive then prepare a rstar table
             
-            isomerisation = @(isomerisationPerSecond) flux * isomerisationPerSecond * trans * parameter.duration;
-            rstar = isomerisation(rstarPerSecond);
-            mstar = isomerisation(mstarPerSecond);
-            sstar = isomerisation(sstarPerSecond);
+            for i = 1 : numel(parameter.ledTypes)
+                ledType = parameter.ledTypes{i};
+                ledCurrent = parameter.ledCurrents{i};
+
+                powerPerUnitArea = service.getIntensityMeasurement(ledType).getPowerPerUnitArea();
+                spectrum = service.getSpectralMeasurement(ledType);
+                linearity = service.getLinearityByStimulsDuration(parameter.duration, ledType);
+            
+                powerSpectrumPerArea = spectrum.getNormalizedPowerSpectrum() * powerPerUnitArea;
+            
+                rstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxRod'),  mouse('rodCollectionArea'));
+                mstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxMcone'), mouse('coneCollectionArea'));
+                sstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxScone'), mouse('coneCollectionArea'));
+                
+                fluxForLed = linearity.getFluxByInput(ledCurrent, 'normalized', true);
+                trans =  10^(-ndf.opticalDensity);
+
+                isomerisation = @(isomerisationPerSecond) fluxForLed * isomerisationPerSecond * trans * parameter.duration;
+                rstar = rstar + isomerisation(rstarPerSecond);
+                mstar = mstar + isomerisation(mstarPerSecond);
+                sstar = sstar + isomerisation(sstarPerSecond);
+            end
+            rstar = round(rstar * intensity/ parameter.numberOfPatterns);
+            mstar = round(mstar * intensity/ parameter.numberOfPatterns);
+            sstar = round(sstar * intensity/ parameter.numberOfPatterns);
         end
     end
 end

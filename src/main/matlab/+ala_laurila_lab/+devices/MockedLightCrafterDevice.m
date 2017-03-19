@@ -11,8 +11,8 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
     
     methods
         
-        function obj = MockedLightCrafterDevice()
-            obj = obj@sa_labs.devices.LightCrafterDevice();
+        function obj = MockedLightCrafterDevice(varargin)
+            obj = obj@sa_labs.devices.LightCrafterDevice(varargin{:});
         end
         
         function setLightCrafter(obj, ~, ~)

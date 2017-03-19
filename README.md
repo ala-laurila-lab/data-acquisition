@@ -8,19 +8,19 @@ It uses [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox) for depen
 
 1. Download and install ToolboxToolbox from above link
 2. Download the [startup.m](https://gist.github.com/ragavsathish/e4e58150c8a6c8ffe95b0ef632715fbe) and save it in MATLAB user path.
-3. git clone  `https://github.com/ala-laurila-lab/data-acquisition.git` into  `projects/data-acquistion`
+3. git clone  `https://github.com/Schwartz-AlaLaurila-Labs/data-acquisition.git` into  `projects/data-acquistion`
 4. To update `tbUseProject('data-acquisition')`
 
 ### Folder organization
 
-1. Like symphony it follows maven style folder organization
-2. All the dependency goes in to lib folder
+1. Like symphony, it follows maven style folder organization
+2. All the dependency goes in to .lib folder
 
 ### Usage
 
-1. Add the `src\main\matlab` and `.lib` to symphony class path settings
-2. Restart the Symphony
-
+1. Add the `src\main\matlab` and `.lib\sa-labs-extension\src\main\matlab` to symphony class path settings
+2. Add [symphony_startup.m](./src/main/matlab/symphony_startup.m) and [symphony_cleanup.m](./src/main/matlab/symphony_cleanup.m) to symphony startup and clean up settings
+3. Restart the Symphony
 
 ### Matlab dependencies
 

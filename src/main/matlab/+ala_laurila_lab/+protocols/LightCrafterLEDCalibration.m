@@ -20,7 +20,6 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
 
     properties (Hidden, Transient)
         linearityMeasurements
-        rigProperty
     end
     
     properties (Hidden)
@@ -44,7 +43,6 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
                 linearity.referenceInput = 100;
                 obj.linearityMeasurements(i) = linearity;
             end
-            obj.rigProperty = sa_labs.factory.getInstance('rigProperty');
             prepareRun@sa_labs.protocols.StageProtocol(obj);
         end
 
@@ -122,11 +120,6 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         function n = get.cycleNumber(obj)
             n = floor(obj.numEpochsCompleted / length(obj.ledCurrentSteps)) + 1;
         end
-        
-        function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, intensity)
-            rstar = [];
-            mstar = [];
-            sstar = [];
-        end
+
     end
 end

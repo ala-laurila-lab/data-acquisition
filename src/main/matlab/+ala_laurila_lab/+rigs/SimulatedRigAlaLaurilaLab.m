@@ -37,7 +37,10 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
         end
         
         function addProjector(obj)
-            mockedLcr = ala_laurila_lab.devices.MockedLightCrafterDevice();
+            mockedLcr = ala_laurila_lab.devices.MockedLightCrafterDevice('micronsPerPixel', 1);
+            mockedLcr.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
+            mockedLcr.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
+            mockedLcr.setConfigurationSetting('angleOffset', 0);
             obj.addDevice(mockedLcr);
         end
         
@@ -48,6 +51,16 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             
             optometer = UnitConvertingDevice('Optometer', 'V').bindStream(daq.getStream('ai4'));
             obj.addDevice(optometer);
+        end
+
+         function [rstar, mstar, sstar] = getIsomerizations(obj, intensity, parameter)
+            rstar = [];
+            mstar = [];
+            sstar = [];
+            
+            % validate all the parameter
+
+            % validate the mouse arguments
         end
     end
     

@@ -51,30 +51,30 @@ classdef SchwartzLab_Rig_Base < symphonyui.core.descriptions.RigDescription
             
         end
         
-        function [rstar, mstar, sstar] = convertIntensityToIsomerizations(obj, protocol)
+        function [rstar, mstar, sstar] = getIsomerizations(obj, intensity, parameter)
             rstar = [];
             mstar = [];
             sstar = [];
             
-            if isempty(protocol.intensity)
+            if isempty(intensity)
                 return
             end
             
-            filterIndex = find(obj.filterWheelNdfValues == protocol.NDF, 1);
+            filterIndex = find(obj.filterWheelNdfValues == parameter.NDF, 1);
             NDF_attenuation = obj.filterWheelAttenuationValues(filterIndex);
             
-            if strcmp('standard', protocol.colorMode)
-                [R, M, S] = sa_labs.util.photoIsom2(protocol.blueLED, protocol.greenLED, ...
-                    protocol.colorPattern1, obj.fitBlue, obj.fitGreen);
+            if strcmp('standard', obj.projectorColorMode)
+                [R, M, S] = sa_labs.util.photoIsom2(parameter.blueLED, parameter.greenLED, ...
+                    parameter.colorPattern1, obj.fitBlue, obj.fitGreen);
             else
                 % UV mode
-                [R, M, S] = sa_labs.util.photoIsom2_triColor(protocol.blueLED, protocol.greenLED, protocol.uvLED, ...
-                    protocol.colorPattern1, obj.fitBlue, obj.fitGreen, obj.fitUV);
+                [R, M, S] = sa_labs.util.photoIsom2_triColor(parameter.blueLED, parameter.greenLED, parameter.uvLED, ...
+                    parameter.colorPattern1, obj.fitBlue, obj.fitGreen, obj.fitUV);
             end
             
-            rstar = round(R * protocol.intensity * NDF_attenuation / protocol.numberOfPatterns, 1);
-            mstar = round(M * protocol.intensity * NDF_attenuation / protocol.numberOfPatterns, 1);
-            sstar = round(S * protocol.intensity * NDF_attenuation / protocol.numberOfPatterns, 1);
+            rstar = round(R * intensity * NDF_attenuation / parameter.numberOfPatterns, 1);
+            mstar = round(M * intensity * NDF_attenuation / parameter.numberOfPatterns, 1);
+            sstar = round(S * intensity * NDF_attenuation / parameter.numberOfPatterns, 1);
         end
     end
     

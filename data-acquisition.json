@@ -31,7 +31,7 @@
 	},
     {
 		"extra": "",
-		"flavor": "",
+		"flavor": "daq-changes",
 		"hook": "",
 		"importance": "",
 		"localHookTemplate": "",
