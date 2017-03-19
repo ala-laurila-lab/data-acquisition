@@ -33,18 +33,15 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
         function prepareRun(obj)
             % obj.showFigure('symphonyui.builtin.figures.ResponseFigure', obj.rig.getDevice('Optometer'));
             
-            % set LED current vector
-            % obj.ledCurrentSteps = 0 : 255;
             calibrationProtocol = ['LCRBlueLed_' num2str(obj.stimTime)];
-            
             import ala_laurila_lab.entity.*;
-
             obj.linearityMeasurements = LinearityMeasurement.empty(0, obj.numberOfCycles);
 
             for i = 1 : obj.numberOfCycles
                 linearity = LinearityMeasurement(calibrationProtocol);
                 linearity.calibrationDate = datestr(date, 'dd/mm/yyyy');
                 linearity.stimulsSize = obj.spotSize;
+                linearity.referenceInput = 100;
                 obj.linearityMeasurements(i) = linearity;
             end
             obj.rigProperty = ala_laurila_lab.factory.getInstance('rigProperty');
@@ -114,8 +111,7 @@ classdef LightCrafterLEDCalibration < sa_labs.protocols.StageProtocol
 
         function completeRun(obj)
             service = obj.rigProperty.rigDescription.getCalibrationService();
-            service.addLinearityMeasurement(obj.linearityMeasurements, obj.user);
-            
+            arrayfun(@(m) service.addLinearityMeasurement(m, obj.user), obj.linearityMeasurements);            
             completeRun@sa_labs.protocols.StageProtocol(obj);           
         end
         

@@ -26,7 +26,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             end
             obj.daqController = daq;
             
-            % TODO check alternative way to configure properties
+            % @deperecated rig property device replace with rigs.RigProperty
             propertyDevice = sa_labs.devices.RigPropertyDevice('test', false);
             obj.addDevice(propertyDevice);
             propertyDevice.addConfigurationSetting('enableRstarConversion', false, 'isReadOnly', true);
