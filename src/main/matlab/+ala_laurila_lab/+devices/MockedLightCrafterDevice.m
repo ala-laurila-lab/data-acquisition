@@ -38,7 +38,9 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
             blue = obj.blue;
         end
         
-        function setPatternAttributes(~, varargin)
+        function setPatternAttributes(obj, varargin)
+           renderer = stage.builtin.renderers.PatternRenderer(1, 8);
+           obj.stageClient.setCanvasRenderer(renderer);
         end
         
         function [bitDepth, color, numPatterns] = getPatternAttributes(~)
@@ -48,7 +50,7 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
         end
         
         function r = getPatternRate(~)
-            r = 10;
+            r = 1 * 60;
         end
         
         function play(obj, presentation)
@@ -91,6 +93,7 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
             else
                 player = stage.builtin.players.RealtimePlayer(presentation);
             end
+            player.setCompositor(stage.builtin.compositors.PatternCompositor());
             obj.stageClient.play(player);
         end
         
