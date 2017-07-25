@@ -21,7 +21,7 @@
 
 * **Please tell us about your environment:**
 
-- MATLAB version: 
-- OS Type :
+    MATLAB version: 
+    OS Type :
 
 * **Other information** (e.g. detailed explanation, stacktraces, related issues, suggestions how to fix, links for us to have context, eg. stackoverflow, gitter, etc)
