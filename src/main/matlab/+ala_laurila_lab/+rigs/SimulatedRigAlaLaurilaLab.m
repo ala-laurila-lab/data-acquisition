@@ -1,5 +1,9 @@
 classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
     
+    properties (Constant)
+        NUMBER_OF_AMP_CHANNELS = 2;
+    end
+    
     methods
         
         function obj = SimulatedRigAlaLaurilaLab()
@@ -13,6 +17,8 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             
             rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.testMode = true;
+            rigProperty.numberOfChannels = obj.NUMBER_OF_AMP_CHANNELS;
+            rigProperty.rigDescription = obj;
             
             obj.calibrationDataUnit = 'simulated-rig-data';
             obj.calibrationLogUnit = 'simulated-rig-log';
@@ -53,7 +59,7 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             obj.addDevice(optometer);
         end
 
-         function [rstar, mstar, sstar] = getIsomerizations(obj, intensity, parameter)
+         function [rstar, mstar, sstar] = getIsomerizations(obj, protocol, pattern)
             rstar = [];
             mstar = [];
             sstar = [];

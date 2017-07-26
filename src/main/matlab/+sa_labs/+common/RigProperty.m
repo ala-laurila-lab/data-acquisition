@@ -3,6 +3,7 @@ classdef RigProperty < handle & mdepin.Bean
     properties
         rigDescription
         testMode
+        numberOfChannels
     end
     
     methods

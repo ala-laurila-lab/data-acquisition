@@ -24,7 +24,7 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "../",
+		"toolboxRoot": "lib",
 		"type": "git",
 		"update": "",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/sa-labs-analysis-core.git"
@@ -39,7 +39,7 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "../",
+		"toolboxRoot": "lib",
 		"type": "git",
 		"update": "",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/sa-labs-extension.git"
@@ -54,7 +54,7 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "../",
+		"toolboxRoot": "lib",
 		"type": "git",
 		"update": "",
 		"url": "https:\/\/github.com\/Schwartz-AlaLaurila-Labs\/matlab-lcr.git"
@@ -69,7 +69,7 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "../",
+		"toolboxRoot": "lib",
 		"type": "git",
 		"update": "",
 	    "url": "https:\/\/github.com\/ala-laurila-lab\/calibration-module.git"
@@ -84,7 +84,7 @@
 		"pathPlacement": "append",
 		"requirementHook": "",
 		"subfolder": "",
-		"toolboxRoot": "",
+		"toolboxRoot": "lib",
 		"type": "include",
 		"update": "",
 	    "url": ""
