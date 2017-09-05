@@ -2,6 +2,8 @@
 
 Data Acquisition customized from [Symphony](http://symphony-das.github.io/) for performing Multi-electrode patch clamp recordings.
 
+![Architecture](etc/acquistion.png)
+
 It uses [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox) for dependency management
 
 ### Installation
