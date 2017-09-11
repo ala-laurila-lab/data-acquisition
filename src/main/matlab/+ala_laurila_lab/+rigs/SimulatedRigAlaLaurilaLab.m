@@ -4,6 +4,13 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
         NUMBER_OF_AMP_CHANNELS = 2;
     end
     
+    properties
+        hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
+            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
+            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
+    end
+    
     methods
         
         function obj = SimulatedRigAlaLaurilaLab()
@@ -67,6 +74,10 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             % validate all the parameter
 
             % validate the mouse arguments
+         end
+        
+        function tf = toBeHidden(obj, name)
+            tf = ismember(name,  obj.hiddenProperties);
         end
     end
     
