@@ -7,16 +7,16 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
         noiseSD = 0.2          % relative light intensity units
         framesPerStep = 1      % at 60Hz
         spotSize = 300         % stim size in microns, use rigConfig to set microns per pixel
-        numberOfSeeds = 5      % number of random seeds
-        numberOfCycles = 1     % number of cycles 
+        seedStartValue = 1
+        seedChangeMode = 'repeat only';
+        numberOfEpochs = 1     % number of cycles 
         meanIntensity = 0.5
     end
     
     properties (Hidden)
         responsePlotMode = 'cartesian';
         responsePlotSplitParameter = 'randSeed';
-        curSeed = 1;
-        seeds
+        seedChangeModeType = symphonyui.core.PropertyType('char', 'row', {'repeat only', 'repeat & increment', 'increment only'})
         waveVec
     end
     
@@ -26,29 +26,29 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
     
     methods
         
-        function prepareRun(obj)
-            prepareRun@sa_labs.protocols.StageProtocol(obj);
-            obj.seeds = zeros(1, obj.numberOfSeeds);
-            
-            for i = 1 : obj.numberOfSeeds 
-                rng('shuffle');
-                obj.seeds(i) = randi(10000);
-            end
-        end
-        
         function prepareEpoch(obj, epoch)
             % Call the base method.
             prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
             
-            index = mod(obj.numEpochsPrepared, obj.numberOfSeeds) + 1;
-            obj.curSeed =  obj.seeds(index);
-
+            if strcmp(obj.seedChangeMode, 'repeat only')
+                seed = obj.seedStartValue;
+            elseif strcmp(obj.seedChangeMode, 'increment only')
+                seed = obj.numEpochsCompleted + obj.seedStartValue;
+            else
+                seedIndex = mod(obj.numEpochsCompleted,2);
+                if seedIndex == 0
+                    seed = obj.seedStartValue;
+                elseif seedIndex == 1
+                    seed = obj.seedStartValue + (obj.numEpochsCompleted + 1) / 2;
+                end
+            end
+            
             %add seed parameter
-            epoch.addParameter('randSeed', obj.curSeed);
-            disp(['Curseed = ' num2str(obj.curSeed)]);
+            epoch.addParameter('randSeed', seed);
+            disp(['Curseed = ' num2str(seed)]);
             
             %set rand seed
-            rng(obj.curSeed);
+            rng(seed);
             
             if ~ isempty(obj.rig.getDevices('LightCrafter'))
                 patternRate = obj.rig.getDevice('LightCrafter').getPatternRate();
@@ -96,7 +96,7 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
         end
         
         function totalNumEpochs = get.totalNumEpochs(obj)
-            totalNumEpochs = obj.numberOfCycles * obj.numberOfSeeds;
+            totalNumEpochs = obj.numberOfEpochs;
         end
         
     end
