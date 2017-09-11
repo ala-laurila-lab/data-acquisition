@@ -9,6 +9,7 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
         spotSize = 300         % stim size in microns, use rigConfig to set microns per pixel
         numberOfSeeds = 5      % number of random seeds
         numberOfCycles = 1     % number of cycles 
+        meanIntensity = 0.5
     end
     
     properties (Hidden)
@@ -56,7 +57,7 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
             nFrames = ceil((obj.stimTime/1000) * (patternRate / obj.framesPerStep));
             obj.waveVec = randn(1, nFrames);
             obj.waveVec = obj.waveVec .* obj.noiseSD; % set SD
-            obj.waveVec = obj.waveVec + obj.meanLevel; % add mean
+            obj.waveVec = obj.waveVec + obj.meanIntensity; % add mean
         end
         
         function p = createPresentation(obj)
@@ -75,23 +76,23 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
             
             preFrames = ceil((obj.preTime/1000) * (patternRate / obj.framesPerStep));
             
-            function c = noiseStim(state, preTime, stimTime, preFrames, waveVec, frameStep, meanLevel)
+            function c = noiseStim(state, preTime, stimTime, preFrames, waveVec, frameStep, meanIntensity)
                 if state.time > preTime*1e-3 && state.time <= (preTime+stimTime) *1e-3
                     index = ceil((state.frame - preFrames) / frameStep);
                     c = waveVec(index);
                 else
-                    c = meanLevel;
+                    c = meanIntensity;
                 end
             end
             
             controller = stage.builtin.controllers.PropertyController(spot, 'color', @(s)noiseStim(s, obj.preTime, obj.stimTime, ...
-                preFrames, obj.waveVec, obj.framesPerStep, obj.meanLevel));
+                preFrames, obj.waveVec, obj.framesPerStep, obj.meanIntensity));
             p.addController(controller);
                         
-            obj.setOnDuringStimController(p, spot);
+            %obj.setOnDuringStimController(p, spot);
             
             % shared code for multi-pattern objects
-            obj.setColorController(p, spot);
+            %obj.setColorController(p, spot);
         end
         
         function totalNumEpochs = get.totalNumEpochs(obj)

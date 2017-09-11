@@ -69,7 +69,6 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             lightCrafter = sa_labs.devices.LightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
-            lightCrafter.setConfigurationSetting('angleOffset',  [0, 0]);
             obj.addDevice(lightCrafter);
         end
         
