@@ -60,10 +60,7 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
             obj.stageClient.setCanvasProjectionOrthographic(0, canvasSize(1), 0, canvasSize(2));
             obj.stageClient.setCanvasProjectionTranslate(canvasTranslation(1), canvasTranslation(2), 0);
             
-            % BACKGROUND
-            background = stage.builtin.stimuli.Rectangle();
-            background.size = canvasSize;
-            background.position = canvasSize/2 - canvasTranslation;
+            background = obj.getBackground();
             backgroundIntensity = obj.getConfigurationSetting('backgroundIntensity');
             background.color = backgroundIntensity;
             backgroundPattern = obj.getConfigurationSetting('backgroundPattern');
