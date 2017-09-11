@@ -1,9 +1,8 @@
-% Because of slower startup time with
-%   tbUseProject('data-acquisition', 'online', false);
-% loading dependecy in a manual way
+% Loading dependecy without updates and console
 
-depdendency = {'mdepin', 'matlab-tree', 'logging4matlab', 'MatlabQuery', 'matlab-persistence'};
-tbAddToPath(tbLocateProject('data-acquisition'));
+[projectPath, configPath, projectParent] = tbLocateProject('data-acquisition');
+
+depdendency = {TbIncludeStrategy.resolveIncludedConfigs(tbReadConfig('configPath', configPath), tbParsePrefs()).name};
 cellfun(@(d) tbAddToPath(tbLocateToolbox(d)), depdendency, 'UniformOutput', false);
 
 % start the stage server if the second instance is not running
@@ -18,3 +17,5 @@ if ~ isempty(mpaRoot)
     javaaddpath(fullfile(mpaRoot, 'lib', 'mpa-jutil-0.0.1-SNAPSHOT.jar'));
     javaaddpath(fullfile(mpaRoot, 'lib', 'java-uuid-generator-3.1.4.jar'));
 end
+
+tbAddToPath(projectPath);
