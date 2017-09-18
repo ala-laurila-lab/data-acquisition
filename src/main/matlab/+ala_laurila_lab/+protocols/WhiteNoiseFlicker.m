@@ -10,7 +10,7 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
         seedStartValue = 1
         seedChangeMode = 'repeat only';
         numberOfEpochs = 1     % number of cycles 
-        meanIntensity = 0.5
+        meanLevel = 0.5
     end
     
     properties (Hidden)
@@ -57,7 +57,7 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
             nFrames = ceil((obj.stimTime/1000) * (patternRate / obj.framesPerStep));
             obj.waveVec = randn(1, nFrames);
             obj.waveVec = obj.waveVec .* obj.noiseSD; % set SD
-            obj.waveVec = obj.waveVec + obj.meanIntensity; % add mean
+            obj.waveVec = obj.waveVec + obj.meanLevel; % add mean
         end
         
         function p = createPresentation(obj)
@@ -76,17 +76,17 @@ classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
             
             preFrames = ceil((obj.preTime/1000) * (patternRate / obj.framesPerStep));
             
-            function c = noiseStim(state, preTime, stimTime, preFrames, waveVec, frameStep, meanIntensity)
+            function c = noiseStim(state, preTime, stimTime, preFrames, waveVec, frameStep, meanLevel)
                 if state.time > preTime*1e-3 && state.time <= (preTime+stimTime) *1e-3
                     index = ceil((state.frame - preFrames) / frameStep);
                     c = waveVec(index);
                 else
-                    c = meanIntensity;
+                    c = meanLevel;
                 end
             end
             
             controller = stage.builtin.controllers.PropertyController(spot, 'color', @(s)noiseStim(s, obj.preTime, obj.stimTime, ...
-                preFrames, obj.waveVec, obj.framesPerStep, obj.meanIntensity));
+                preFrames, obj.waveVec, obj.framesPerStep, obj.meanLevel));
             p.addController(controller);
                         
             %obj.setOnDuringStimController(p, spot);
