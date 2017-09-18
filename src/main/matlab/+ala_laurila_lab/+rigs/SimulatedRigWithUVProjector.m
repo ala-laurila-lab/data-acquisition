@@ -1,15 +1,6 @@
 classdef SimulatedRigWithUVProjector < ala_laurila_lab.rigs.AaltoPatchRig
     
-    properties (Constant)
-        NUMBER_OF_AMP_CHANNELS = 2;
-    end
-    
-    properties
-        hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
-            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
-            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
-            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
-    end
+
     
     methods
         
@@ -24,11 +15,17 @@ classdef SimulatedRigWithUVProjector < ala_laurila_lab.rigs.AaltoPatchRig
             
             rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.testMode = true;
-            rigProperty.numberOfChannels = obj.NUMBER_OF_AMP_CHANNELS;
+            rigProperty.numberOfChannels = 2;
             rigProperty.rigDescription = obj;
             
             obj.calibrationDataUnit = 'simulated-rig-data';
             obj.calibrationLogUnit = 'simulated-rig-log';
+            
+            obj.hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
+            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
+            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
+
         end
         
         function prepareRigDescription(obj)
