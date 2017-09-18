@@ -1,8 +1,10 @@
-classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
+classdef SimulatedRigWithUVProjector < ala_laurila_lab.rigs.AaltoPatchRig
     
-   methods
+
+    
+    methods
         
-        function obj = SimulatedRigAlaLaurilaLab()
+        function obj = SimulatedRigWithUVProjector()
             
             import symphonyui.builtin.daqs.*;
             import symphonyui.builtin.devices.*;
@@ -18,6 +20,12 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             
             obj.calibrationDataUnit = 'simulated-rig-data';
             obj.calibrationLogUnit = 'simulated-rig-log';
+            
+            obj.hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
+            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
+            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
+
         end
         
         function prepareRigDescription(obj)
@@ -38,14 +46,6 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
             obj.addDevice(amp2);
         end
         
-        function addProjector(obj)
-            mockedLcr = ala_laurila_lab.devices.MockedLightCrafterDevice('micronsPerPixel', 1);
-            mockedLcr.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
-            mockedLcr.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
-            mockedLcr.setConfigurationSetting('angleOffset', 0);
-            obj.addDevice(mockedLcr);
-        end
-        
         function addOptometer(obj)
             import symphonyui.builtin.devices.*;
             import symphonyui.core.*;
@@ -64,7 +64,7 @@ classdef SimulatedRigAlaLaurilaLab < ala_laurila_lab.rigs.AaltoPatchRig
 
             % validate the mouse arguments
          end
-        
+         
         function tf = toBeHidden(obj, name)
             tf = ismember(name,  obj.hiddenProperties);
         end

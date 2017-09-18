@@ -1,7 +1,7 @@
 classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
     
     properties
-        micronsPerPixel = 1.869
+        micronsPerPixel = 1.86
         frameTrackerPosition = [40, 40]
         frameTrackerSize = [80, 80]
         
@@ -9,10 +9,15 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         calibrationLogUnit = 'aalto-patch-rig-log'
         
         filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
-        filterWheelAttenuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
+        filterWheelAttentuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
         filterWheelDefaultValue = 3;
         
         projectorColorMode = 'standard'
+        
+        hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
+            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
+            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};  
     end
     
     methods
@@ -35,7 +40,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             
             rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.rigDescription = obj;
-            
+            rigProperty.numberOfChannels = 4;
             obj.prepareRigDescription();
         end
         
@@ -69,7 +74,6 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             lightCrafter = sa_labs.devices.LightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
-            lightCrafter.setConfigurationSetting('angleOffset',  [0, 0]);
             obj.addDevice(lightCrafter);
         end
         
@@ -107,8 +111,8 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         
         function addFilterWheel(obj)
             ndfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice('COM11');
-            ndfWheel.setConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
-            ndfWheel.addResource('filterWheelAttenuationValues', obj.filterWheelAttenuationValues);
+            ndfWheel.addConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
+            ndfWheel.addResource('filterWheelAttenuationValues', obj.filterWheelAttentuationValues);
             ndfWheel.addResource('defaultNdfValue', obj.filterWheelDefaultValue);
             
             obj.addDevice(ndfWheel);
@@ -161,6 +165,10 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             rstar = round(rstar * intensity/ parameter.numberOfPatterns);
             mstar = round(mstar * intensity/ parameter.numberOfPatterns);
             sstar = round(sstar * intensity/ parameter.numberOfPatterns);
+        end
+        
+        function tf = toBeHidden(obj, name)
+            tf = ismember(name,  obj.hiddenProperties);
         end
     end
 end
