@@ -17,7 +17,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
             'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
             'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
-            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};  
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
     end
     
     methods
@@ -41,6 +41,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             rigProperty = sa_labs.factory.getInstance('rigProperty');
             rigProperty.rigDescription = obj;
             rigProperty.numberOfChannels = 4;
+            
             obj.prepareRigDescription();
         end
         
@@ -143,20 +144,20 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             for i = 1 : numel(parameter.ledTypes)
                 ledType = parameter.ledTypes{i};
                 ledCurrent = parameter.ledCurrents{i};
-
+                
                 powerPerUnitArea = service.getIntensityMeasurement(ledType).getPowerPerUnitArea();
                 spectrum = service.getSpectralMeasurement(ledType);
                 linearity = service.getLinearityByStimulsDuration(parameter.duration, ledType);
-            
+                
                 powerSpectrumPerArea = spectrum.getNormalizedPowerSpectrum() * powerPerUnitArea;
-            
+                
                 rstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxRod'),  mouse('rodCollectionArea'));
                 mstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxMcone'), mouse('coneCollectionArea'));
                 sstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxScone'), mouse('coneCollectionArea'));
                 
                 fluxForLed = linearity.getFluxByInput(ledCurrent, 'normalized', true);
                 trans =  10^(-ndf.opticalDensity);
-
+                
                 isomerisation = @(isomerisationPerSecond) fluxForLed * isomerisationPerSecond * trans * parameter.duration;
                 rstar = rstar + isomerisation(rstarPerSecond);
                 mstar = mstar + isomerisation(mstarPerSecond);
@@ -170,6 +171,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         function tf = toBeHidden(obj, name)
             tf = ismember(name,  obj.hiddenProperties);
         end
+
     end
 end
 
