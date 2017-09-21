@@ -48,8 +48,21 @@ classdef Notepad < symphonyui.ui.Module
             obj.addListener(a, 'ChangedControllerState', @obj.onServiceChangedControllerState);
             daqLogger = sa_labs.factory.getInstance('daqUILogger');
             obj.addListener(daqLogger, 'MessageLogged', @obj.onDaqLoggerMessageLogged);
+            
+            d = obj.documentationService;
+            obj.addListener(d, 'AddedSource', @obj.onServiceAddedSource);
+            obj.addListener(d, 'CreatedFile', @obj.onServiceCreatedOrOpenedFile);
+            obj.addListener(d, 'OpenedFile', @obj.onServiceCreatedOrOpenedFile);
+            
+            if obj.documentationService.hasOpenFile()
+                experiment = obj.documentationService.getExperiment();
+                obj.addListener(experiment, 'AddedNote', @obj.onServiceAddedNote);
+            end
         end
         
+        function bindAddedNoteListener(obj, source)
+            obj.addListener(source, 'AddedNote', @obj.onServiceAddedNote);
+        end
     end
     
     methods (Access = private)
@@ -69,6 +82,10 @@ classdef Notepad < symphonyui.ui.Module
         end
         
         function onServiceChangedControllerState(obj, ~,  ~)
+            obj.setLogging();
+        end
+        
+        function setLogging(obj)
             import symphonyui.core.ControllerState;
             import sa_labs.common.DaqLogger;
             if obj.acquisitionService.getControllerState() == ControllerState.RECORDING
@@ -78,13 +95,35 @@ classdef Notepad < symphonyui.ui.Module
             end
         end
         
+        function onServiceAddedSource(obj, ~, eventData)
+            obj.bindAddedNoteListener(eventData.data);
+        end
+        
+        function onServiceCreatedOrOpenedFile(obj, ~, ~)
+            experiment = obj.documentationService.getExperiment();
+            obj.bindAddedNoteListener(experiment);
+        end
+        
+        function onServiceAddedNote(obj, ~, eventData)
+            import sa_labs.common.DaqLogger;
+            comments = eventData.data.text;
+            DaqLogger.setLogging(logging.logging.INFO);
+                    
+            %delimitter = @(msg) strcat(repmat('*', 1, 25), msg , repmat('*', 1, 25));
+            %comments = sprintf('\n%s \n%s \n%s', delimitter(' Start Comments '), notes.text, delimitter(' End Comments '));
+            DaqLogger.log([' Notes: ' comments]);
+            obj.setLogging()
+        end
+        
         function appendText(obj, text)
             obj.jEditbox.setCaretPosition(obj.jEditbox.getDocument().getLength());
-            obj.jEditbox.replaceSelection(text);
+            obj.jEditbox.replaceSelection(text); 
+            
         end
         
         function onDaqLoggerMessageLogged(obj, ~, eventData)
             obj.appendText(eventData.data);
+            obj.setCaretPosition();
         end
         
         function setCaretPosition(obj)
