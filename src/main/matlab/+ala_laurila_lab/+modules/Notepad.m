@@ -1,14 +1,8 @@
 classdef Notepad < symphonyui.ui.Module
     
-    events
-        NewFile
-        OpenFile
-        CloseFile
-        Exit
-    end
-    
     properties (Access = private)
         fileMenu
+        addComments
         textArea
         jEditbox
         jScrollPanel
@@ -26,17 +20,21 @@ classdef Notepad < symphonyui.ui.Module
                 'Label', 'File');
             obj.fileMenu.newFile = uimenu(obj.fileMenu.root, ...
                 'Label', 'New...', ...
-                'Callback', @(h,d) notify(obj, 'NewFile'));
+                'Callback', @(h,d) obj.onSelectNewFile());
             obj.fileMenu.openFile = uimenu(obj.fileMenu.root, ...
                 'Label', 'Open...', ...
-                'Callback', @(h,d) notify(obj, 'OpenFile'));
+                'Callback', @(h,d) obj.onSelectOpenFile());
             obj.fileMenu.closeFile = uimenu(obj.fileMenu.root, ...
                 'Label', 'Close', ...
-                'Callback', @(h,d) notify(obj, 'CloseFile'));
+                'Callback', @(h,d) obj.onSelectCloseFile());
             obj.fileMenu.exit = uimenu(obj.fileMenu.root, ...
                 'Label', 'Exit', ...
                 'Separator', 'on', ...
-                'Callback', @(h,d) notify(obj, 'Exit'));
+                'Callback', @(h,d) obj.onSelectExit());
+            
+            obj.addComments =  uimenu(figureHandle, ...
+                'Label', 'Add Comments',...
+                'Callback', @(h,d) obj.onSelectAddComments());
             
             mainLayout = uix.VBox( ...
                 'Parent', figureHandle, ...
@@ -68,13 +66,10 @@ classdef Notepad < symphonyui.ui.Module
         function bind(obj)
             bind@symphonyui.ui.Module(obj);
             
-            d = obj.documentationService;
-            %obj.addListener(d, 'AddedSource', @obj.onServiceAddedSource);
-            %obj.addListener(d, 'BeganEpochGroup', @obj.onServiceBeganEpochGroup);
-            
+            a = obj.acquisitionService;
+            obj.addListener(a, 'ChangedControllerState', @obj.onServiceChangedControllerState);
             daqLogger = sa_labs.factory.getInstance('daqUILogger');
             obj.addListener(daqLogger, 'MessageLogged', @obj.onDaqLoggerMessageLogged);
-            
         end
         
     end
@@ -87,22 +82,33 @@ classdef Notepad < symphonyui.ui.Module
             
             daqLogger = sa_labs.factory.getInstance('daqUILogger');
             daqLogger.setFilename(logFile);
-            daqLogger.setLogLevel(logging.logging.INFO);
-            
-            daqLogger = sa_labs.factory.getInstance('daqLogger');
-            daqLogger.setLogLevel(logging.logging.INFO);
             
             fid = fopen(logFile, 'rt');
             text = textscan(fid,'%s','Delimiter','\n');
             fclose(fid);
-            text = sprintf('%s' , evalc('disp(text{:})'));
-           obj.appendText(text);
+            cellfun(@(msg) obj.appendText(sprintf('%s \n', msg)), text{:});
+            sa_labs.common.DaqLogger.setLogging(logging.logging.OFF);
+        end
+        
+        function onServiceChangedControllerState(obj, ~,  ~)
+            import symphonyui.core.ControllerState;
+            import sa_labs.common.DaqLogger;
+            if obj.acquisitionService.getControllerState() == ControllerState.RECORDING
+                DaqLogger.setLogging(logging.logging.INFO);
+            else
+                DaqLogger.setLogging(logging.logging.OFF);
+            end
+        end
+        
+        function onSelectAddComments(obj, ~, ~)
+             ala_laurila_lab.modules.CommentsPresenter().go();
+             obj.onServiceChangedControllerState();
         end
         
         function appendText(obj, text)
             obj.jEditbox.setCaretPosition(obj.jEditbox.getDocument().getLength());
-            obj.jEditbox.replaceSelection(text);    
-     end
+            obj.jEditbox.replaceSelection(text);
+        end
         
         function onDaqLoggerMessageLogged(obj, ~, eventData)
             obj.appendText(eventData.data);
