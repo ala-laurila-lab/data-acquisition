@@ -4,10 +4,10 @@ classdef Notepad < symphonyui.ui.Module
         textArea
         jEditbox
         jScrollPanel
+        addComments
     end
     
     methods
-        
         function createUi(obj, figureHandle)
             
             set(figureHandle, ...
@@ -28,11 +28,14 @@ classdef Notepad < symphonyui.ui.Module
                 'Max',1000);
             
             obj.jScrollPanel = findjobj(obj.textArea);
+            obj.addComments =  uimenu(figureHandle, ...
+                'Label', 'Add Comments',...
+                'Callback', @(h,d) obj.onSelectAddComments());
             try
                 obj.jScrollPanel.setVerticalScrollBarPolicy(obj.jScrollPanel.java.VERTICAL_SCROLLBAR_AS_NEEDED);
                 viewPort = obj.jScrollPanel.getViewport();
                 obj.jEditbox = handle(viewPort.getView, 'CallbackProperties');
-                obj.jEditbox.setEditable(true);
+                obj.jEditbox.setEditable(false);
             catch exception
                 disp(exception.getReport);
             end
@@ -73,6 +76,7 @@ classdef Notepad < symphonyui.ui.Module
             
             daqLogger = sa_labs.factory.getInstance('daqUILogger');
             daqLogger.setFilename(logFile);
+            obj.jEditbox.setEditable(true);
             
             fid = fopen(logFile, 'rt');
             text = textscan(fid,'%s','Delimiter','\n');
@@ -82,6 +86,11 @@ classdef Notepad < symphonyui.ui.Module
         end
         
         function onServiceChangedControllerState(obj, ~,  ~)
+            obj.setLogging();
+        end
+        
+        function onSelectAddComments(obj, ~, ~)
+            ala_laurila_lab.modules.CommentsPresenter().go();
             obj.setLogging();
         end
         
@@ -118,12 +127,10 @@ classdef Notepad < symphonyui.ui.Module
         function appendText(obj, text)
             obj.jEditbox.setCaretPosition(obj.jEditbox.getDocument().getLength());
             obj.jEditbox.replaceSelection(text); 
-            
         end
         
         function onDaqLoggerMessageLogged(obj, ~, eventData)
             obj.appendText(eventData.data);
-            obj.setCaretPosition();
         end
         
         function setCaretPosition(obj)

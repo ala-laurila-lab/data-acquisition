@@ -69,7 +69,7 @@ classdef DaqLogger < logging.logging
         
         function daqlogger = addLogTableHeader(header)
             daqlogger = sa_labs.factory.getInstance('daqLogger');
-            daqlogger.appendHeader(header)
+            daqlogger.appendHeader(header);
         end
         
         function daqlogger = addLogTableColumn(header, data)

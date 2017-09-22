@@ -75,7 +75,6 @@ classdef CommentsPresenter < appbox.Presenter
     methods (Access = protected)
         
         function didGo(obj)
-          obj.textArea.String = strcat(repmat('*', 1, 25), ' Start comments ', repmat('*', 1, 25));
           obj.textArea.Editable = true;
         end
         
@@ -97,10 +96,10 @@ classdef CommentsPresenter < appbox.Presenter
         end
         
         function onViewSelectedAdd(obj, ~, ~)
-            
+            header = strcat(repmat('*', 1, 25), ' Start comments ', repmat('*', 1, 25));
+            endText = strcat(repmat('*', 1, 25), ' End comments ', repmat('*', 1, 27));
             text = obj.textArea.String;
-            endText = strcat(repmat('*', 1, 25), ' End comments ', repmat('*', 1, 25));
-            comments = sprintf('\n%s \n%s', text, endText);
+            comments = sprintf('\n%s \n%s \n%s', header, text, endText);
             try
                import sa_labs.common.DaqLogger;
                DaqLogger.setLogging(logging.logging.INFO);
