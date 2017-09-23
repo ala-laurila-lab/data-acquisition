@@ -16,6 +16,7 @@ classdef AutoCenter < sa_labs.protocols.stage.AutoCenter & sa_labs.common.Protoc
             import sa_labs.common.DaqLogger;
             DaqLogger.addLogTableHeader('stimTime');
             DaqLogger.addLogTableHeader('values');  
+            DaqLogger.addLogTableHeader('epochDuration');  
             DaqLogger.addLogTableHeader('Total Time(s)');  
             obj.logPrepareRun();
         end
@@ -30,6 +31,7 @@ classdef AutoCenter < sa_labs.protocols.stage.AutoCenter & sa_labs.common.Protoc
             import sa_labs.common.DaqLogger;
             DaqLogger.addLogTableColumn('stimTime', obj.stimTime);
             DaqLogger.addLogTableColumn('values', obj.values);
+            DaqLogger.addLogTableColumn('epochDuration', seconds(epoch.duration));
             DaqLogger.addLogTableColumn('Total Time(s)', seconds(datetime - obj.startDateTime));
             obj.logCompleteEpoch(epoch);
         end
