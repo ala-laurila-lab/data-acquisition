@@ -12,6 +12,7 @@ classdef SpatialNoise < sa_labs.protocols.stage.SpatialNoise  & sa_labs.common.P
         end
         
         function prepareEpoch(obj, epoch)
+            import sa_labs.common.DaqLogger;
             prepareEpoch@sa_labs.protocols.stage.SpatialNoise(obj, epoch);
             DaqLogger.addLogTableColumn('noiseSeed', obj.noiseSeed);
             obj.logPrepareEpoch(epoch);
