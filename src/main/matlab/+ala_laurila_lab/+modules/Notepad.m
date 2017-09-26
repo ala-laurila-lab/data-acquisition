@@ -5,9 +5,17 @@ classdef Notepad < symphonyui.ui.Module
         jEditbox
         jScrollPanel
         addComments
+        log
+        settings
     end
     
     methods
+        
+        function obj = Notepad()
+            obj.settings = ala_laurila_lab.modules.settings.NotepadSettings();
+            obj.log = log4m.LogManager.getLogger(class(obj));
+        end
+        
         function createUi(obj, figureHandle)
             
             set(figureHandle, ...
@@ -44,6 +52,7 @@ classdef Notepad < symphonyui.ui.Module
     end
     
     methods (Access = protected)
+       
         function bind(obj)
             bind@symphonyui.ui.Module(obj);
             
@@ -66,6 +75,22 @@ classdef Notepad < symphonyui.ui.Module
         function bindAddedNoteListener(obj, source)
             obj.addListener(source, 'AddedNote', @obj.onServiceAddedNote);
         end
+        
+        function willGo(obj)
+            try
+                obj.loadSettings();
+            catch x
+                obj.log.debug(['Failed to load settings: ' x.message], x);
+            end
+        end
+        
+        function willStop(obj)
+            try
+                obj.saveSettings();
+            catch x
+                obj.log.debug(['Failed to save settings: ' x.message], x);
+            end
+        end        
     end
     
     methods (Access = private)
@@ -136,6 +161,19 @@ classdef Notepad < symphonyui.ui.Module
         function setCaretPosition(obj)
             javaTextArea = obj.jScrollPanel.getComponent(0).getComponent(0);
             javaTextArea.getCaret().setUpdatePolicy(2);
+        end
+        
+        function loadSettings(obj)
+            if ~isempty(obj.settings.viewPosition)
+                p1 = obj.view.position;
+                p2 = obj.settings.viewPosition;
+                obj.view.position = [p2(1) p2(2) p1(3) p1(4)];
+            end
+        end
+        
+        function saveSettings(obj)
+            obj.settings.viewPosition = obj.view.position;
+            obj.settings.save();
         end
     end
 end
