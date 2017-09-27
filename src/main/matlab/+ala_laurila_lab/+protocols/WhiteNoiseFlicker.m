@@ -1,104 +1,32 @@
-classdef WhiteNoiseFlicker < sa_labs.protocols.StageProtocol
+classdef WhiteNoiseFlicker < sa_labs.protocols.stage.WhiteNoiseFlicker  & sa_labs.common.ProtocolLogger
     
-    properties
-        preTime = 1000
-        stimTime = 8000
-        tailTime = 1000
-        noiseSD = 0.2          % relative light intensity units
-        framesPerStep = 1      % at 60Hz
-        spotSize = 300         % stim size in microns, use rigConfig to set microns per pixel
-        seedStartValue = 1
-        seedChangeMode = 'repeat only';
-        numberOfEpochs = 1     % number of cycles 
-        meanLevel = 0.5
-    end
-    
-    properties (Hidden)
-        responsePlotMode = 'cartesian';
-        responsePlotSplitParameter = 'randSeed';
-        seedChangeModeType = symphonyui.core.PropertyType('char', 'row', {'repeat only', 'repeat & increment', 'increment only'})
-        waveVec
-    end
-    
-    properties (Hidden, Dependent)
-        totalNumEpochs
-    end
-    
+    % This file contains the protocol documentation
+    % The actual protocol lives in lib/sa-labs-extension/src/main/matlab/+sa_labs/+protocols/+stage
     methods
         
+        function prepareRun(obj)
+            prepareRun@sa_labs.protocols.stage.WhiteNoiseFlicker(obj);
+            import sa_labs.common.DaqLogger;
+            DaqLogger.addLogTableHeader('randSeed');
+            obj.logPrepareRun();
+        end
+        
         function prepareEpoch(obj, epoch)
-            % Call the base method.
-            prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
-            
-            if strcmp(obj.seedChangeMode, 'repeat only')
-                seed = obj.seedStartValue;
-            elseif strcmp(obj.seedChangeMode, 'increment only')
-                seed = obj.numEpochsCompleted + obj.seedStartValue;
-            else
-                seedIndex = mod(obj.numEpochsCompleted,2);
-                if seedIndex == 0
-                    seed = obj.seedStartValue;
-                elseif seedIndex == 1
-                    seed = obj.seedStartValue + (obj.numEpochsCompleted + 1) / 2;
-                end
-            end
-            
-            %add seed parameter
-            epoch.addParameter('randSeed', seed);
-            disp(['Curseed = ' num2str(seed)]);
-            
-            %set rand seed
-            rng(seed);
-            
-            if ~ isempty(obj.rig.getDevices('LightCrafter'))
-                patternRate = obj.rig.getDevice('LightCrafter').getPatternRate();
-            end
-            
-            nFrames = ceil((obj.stimTime/1000) * (patternRate / obj.framesPerStep));
-            obj.waveVec = randn(1, nFrames);
-            obj.waveVec = obj.waveVec .* obj.noiseSD; % set SD
-            obj.waveVec = obj.waveVec + obj.meanLevel; % add mean
+            prepareEpoch@sa_labs.protocols.stage.WhiteNoiseFlicker(obj, epoch);
+            import sa_labs.common.DaqLogger;
+            DaqLogger.addLogTableColumn('randSeed', epoch.parameters('randSeed'));
+            obj.logPrepareEpoch(epoch);
         end
         
-        function p = createPresentation(obj)
-            p = stage.core.Presentation((obj.preTime + obj.stimTime + obj.tailTime) * 1e-3);
-            
-            spot = stage.builtin.stimuli.Ellipse();
-            spot.radiusX = round(obj.um2pix(obj.spotSize / 2));  % convert to pixels
-            spot.radiusY = spot.radiusX;
-            canvasSize = obj.rig.getDevice('Stage').getCanvasSize();
-            spot.position = canvasSize / 2;
-            p.addStimulus(spot);
-            
-            if ~ isempty(obj.rig.getDevices('LightCrafter'))
-                patternRate = obj.rig.getDevice('LightCrafter').getPatternRate();
-            end
-            
-            preFrames = ceil((obj.preTime/1000) * (patternRate / obj.framesPerStep));
-            
-            function c = noiseStim(state, preTime, stimTime, preFrames, waveVec, frameStep, meanLevel)
-                if state.time > preTime*1e-3 && state.time <= (preTime+stimTime) *1e-3
-                    index = ceil((state.frame - preFrames) / frameStep);
-                    c = waveVec(index);
-                else
-                    c = meanLevel;
-                end
-            end
-            
-            controller = stage.builtin.controllers.PropertyController(spot, 'color', @(s)noiseStim(s, obj.preTime, obj.stimTime, ...
-                preFrames, obj.waveVec, obj.framesPerStep, obj.meanLevel));
-            p.addController(controller);
-                        
-            %obj.setOnDuringStimController(p, spot);
-            
-            % shared code for multi-pattern objects
-            %obj.setColorController(p, spot);
+        function completeEpoch(obj, epoch)
+            completeEpoch@sa_labs.protocols.stage.WhiteNoiseFlicker(obj, epoch);
+            obj.logCompleteEpoch(epoch);
         end
         
-        function totalNumEpochs = get.totalNumEpochs(obj)
-            totalNumEpochs = obj.numberOfEpochs;
+        function completeRun(obj)
+            completeRun@sa_labs.protocols.stage.WhiteNoiseFlicker(obj);
+            obj.logCompleteRun();
         end
-        
     end
-    
 end
+
