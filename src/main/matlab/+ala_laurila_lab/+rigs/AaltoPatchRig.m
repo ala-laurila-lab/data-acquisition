@@ -126,46 +126,11 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         end
         
         function [rstar, mstar, sstar] = getIsomerizations(obj, intensity, parameter)
-            import ala_laurila_lab.*;
-            service = obj.getCalibrationService;
             
             rstar = [];
             mstar = [];
             sstar = [];
-            
-            ndf = service.getNDFMeasurement(parameter.ndf);
-            
-            if isempty(parameter.mouse)
-                return;
-            end
-            
-            % TODO if below code is computationaly intensive then prepare a rstar table
-            
-            for i = 1 : numel(parameter.ledTypes)
-                ledType = parameter.ledTypes{i};
-                ledCurrent = parameter.ledCurrents{i};
-                
-                powerPerUnitArea = service.getIntensityMeasurement(ledType).getPowerPerUnitArea();
-                spectrum = service.getSpectralMeasurement(ledType);
-                linearity = service.getLinearityByStimulsDuration(parameter.duration, ledType);
-                
-                powerSpectrumPerArea = spectrum.getNormalizedPowerSpectrum() * powerPerUnitArea;
-                
-                rstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxRod'),  mouse('rodCollectionArea'));
-                mstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxMcone'), mouse('coneCollectionArea'));
-                sstarPerSecond = util.photonToIsomerisation(powerSpectrumPerArea, spectrum.wavelength, mouse('lambdaMaxScone'), mouse('coneCollectionArea'));
-                
-                fluxForLed = linearity.getFluxByInput(ledCurrent, 'normalized', true);
-                trans =  10^(-ndf.opticalDensity);
-                
-                isomerisation = @(isomerisationPerSecond) fluxForLed * isomerisationPerSecond * trans * parameter.duration;
-                rstar = rstar + isomerisation(rstarPerSecond);
-                mstar = mstar + isomerisation(mstarPerSecond);
-                sstar = sstar + isomerisation(sstarPerSecond);
-            end
-            rstar = round(rstar * intensity/ parameter.numberOfPatterns);
-            mstar = round(mstar * intensity/ parameter.numberOfPatterns);
-            sstar = round(sstar * intensity/ parameter.numberOfPatterns);
+
         end
         
         function tf = toBeHidden(obj, name)
