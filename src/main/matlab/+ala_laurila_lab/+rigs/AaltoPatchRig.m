@@ -51,6 +51,15 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addRigSwitches();
             obj.addOscilloscopeTrigger();
             obj.addFilterWheel();
+            obj.addTempratureController();
+        end
+        
+        function addTempratureController(obj)
+            import symphonyui.builtin.devices.*;
+            daq = obj.daqController;
+            
+            temperature = UnitConvertingDevice('Temperature Controller', 'V', 'manufacturer', 'Warner Instruments').bindStream(daq.getStream('ai7'));
+            obj.addDevice(temperature);
         end
         
         function addAmplifier(obj)
