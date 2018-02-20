@@ -1,7 +1,7 @@
 classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
     
     properties
-        micronsPerPixel = 1.86
+        micronsPerPixel = 1.8
         frameTrackerPosition = [40, 40]
         frameTrackerSize = [80, 80]
         
