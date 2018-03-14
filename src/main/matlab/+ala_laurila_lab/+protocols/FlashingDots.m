@@ -3,13 +3,13 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
         
     properties
         %times in ms
-        preTime = 500                   % Spot leading duration (ms)
-        stimTime = 500                  % Spot duration (ms)
-        tailTime = 500                  % Spot trailing duration (ms)
+        preTime = 100                   % Spot leading duration (ms)
+        stimTime = 300                  % Spot duration (ms)
+        tailTime = 100                  % Spot trailing duration (ms)
         
-        spotSize = 200;                 % spot diameter (um)
-        spotSeparation = 300;           % spot separation (um)
-        intensities = [0.25, 0.75];     % intensitites at each position
+        testWidth = 500;                % spot diameter (um)
+        flashSize = 200;                 % spot diameter (um)
+        intensities = [1];              % intensitites at each position
         numberOfCycles = 2              % repetitions of each pos/int
         randomOrdering = false;         % ramdom presentation order
         horizontalLine = false;         % false: circular / true: line
@@ -38,20 +38,11 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
             obj.logPrepareRun();
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
-            % Generate spot locations
-            % Five points along a line
-            if obj.horizontalLine
-                obj.positions = zeros(5, 2);
-                obj.positions(:, 1) = (-2:1:2) * obj.spotSeparation;
-            % or a circular flower pattern consisting of seven positions
-            else
-                obj.positions = zeros(7, 2);
-                for i = 0:5
-                    obj.positions(i+2, :) = ...
-                        [cosd(i*60)*obj.spotSeparation,...
-                         sind(i*60)*obj.spotSeparation];
-                end
-            end
+            % Generate points on a grid
+            gridPositions = obj.flashSize:obj.flashSize:obj.testWidth;
+            gridPositions = gridPositions - mean(gridPositions);
+            [xCoord, yCoord] = meshgrid(gridPositions, gridPositions);
+            obj.positions = [xCoord(:), yCoord(:)];
                 
             % Create matrix whose rows uniquely identify each posiible
             % position/intensity combination
@@ -94,9 +85,11 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
         function p = createPresentation(obj)
             p = stage.core.Presentation((obj.preTime + obj.stimTime + obj.tailTime) * 1e-3);
 
-            spot = stage.builtin.stimuli.Ellipse();
-            spot.radiusX = round(obj.um2pix(obj.spotSize / 2));
-            spot.radiusY = spot.radiusX;
+%             spot = stage.builtin.stimuli.Ellipse();
+%             spot.radiusX = round(obj.um2pix(obj.flashSize / 2));
+%             spot.radiusY = spot.radiusX;
+            spot = stage.builtin.stimuli.Rectangle();
+            spot.size = round([obj.um2pix(obj.flashSize), obj.um2pix(obj.flashSize)]);
             spot.color = obj.intensity;
             canvasSize = obj.rig.getDevice('Stage').getCanvasSize();
             spot.position = canvasSize / 2 + round(obj.um2pix(obj.position));
