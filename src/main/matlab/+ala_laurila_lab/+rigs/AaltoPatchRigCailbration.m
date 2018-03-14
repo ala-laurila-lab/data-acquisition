@@ -1,9 +1,11 @@
-classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRig
+classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRigOneAmp
     
     methods
         
         function prepareRigDescription(obj)
+            obj.addAmplifier();
             obj.addProjector();
+            obj.addOscilloscopeTrigger();
             obj.addRigSwitches();
             obj.addFilterWheel();
             obj.addOptometer();
@@ -12,7 +14,7 @@ classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRig
         function addOptometer(obj)
             import symphonyui.builtin.devices.*;
             import symphonyui.core.*;
-            
+            daq = obj.daqController ;
             optometer = UnitConvertingDevice('Optometer', 'V').bindStream(daq.getStream('ai4'));
             obj.addDevice(optometer);
         end
