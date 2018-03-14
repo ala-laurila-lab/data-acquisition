@@ -35,6 +35,7 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
     methods
         
         function prepareRun(obj)
+            obj.showFigure('symphonyui.builtin.figures.ResponseFigure', obj.rig.getDevice('Optometer'));
             obj.logPrepareRun();
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
@@ -76,6 +77,9 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
             epoch.addParameter('position', obj.position);
             epoch.addParameter('intensity', obj.intensity);
             epoch.addParameter('flashIdx', rowIdx);
+            
+            optometer = obj.rig.getDevice('Optometer');
+            epoch.addResponse(optometer);
             
             % Call the base method.
             prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
