@@ -9,7 +9,7 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
         
         testWidth = 500;                % spot diameter (um)
         flashSize = 200;                 % spot diameter (um)
-        intensities = [1];              % intensitites at each position
+        intensities = 1;              % intensitites at each position
         numberOfCycles = 2              % repetitions of each pos/int
         randomOrdering = false;         % ramdom presentation order
         horizontalLine = false;         % false: circular / true: line
@@ -40,6 +40,7 @@ classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoco
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
             % Generate points on a grid
+            obj.intensities = linspace(0, 255, 256) / 255;
             gridPositions = obj.flashSize:obj.flashSize:obj.testWidth;
             gridPositions = gridPositions - mean(gridPositions);
             [xCoord, yCoord] = meshgrid(gridPositions, gridPositions);
