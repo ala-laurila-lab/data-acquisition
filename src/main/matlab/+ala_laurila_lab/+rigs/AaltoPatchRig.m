@@ -1,7 +1,7 @@
 classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
     
     properties
-        micronsPerPixel = 1.86
+        micronsPerPixel = 1.8
         frameTrackerPosition = [40, 40]
         frameTrackerSize = [80, 80]
         
@@ -51,6 +51,15 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addRigSwitches();
             obj.addOscilloscopeTrigger();
             obj.addFilterWheel();
+            obj.addTempratureController();
+        end
+        
+        function addTempratureController(obj)
+            import symphonyui.builtin.devices.*;
+            daq = obj.daqController;
+            
+            temperature = UnitConvertingDevice('Temperature Controller', 'V', 'manufacturer', 'Warner Instruments').bindStream(daq.getStream('ai7'));
+            obj.addDevice(temperature);
         end
         
         function addAmplifier(obj)
