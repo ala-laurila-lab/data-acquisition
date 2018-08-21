@@ -3,14 +3,14 @@ classdef MovingSpot < sa_labs.protocols.StageProtocol & sa_labs.common.ProtocolL
     properties
         preTime = 250                   % Bar leading duration (ms)
         tailTime = 250                  % Bar trailing duration (ms)
-        intensity = 1.0                 % Bar light intensity (0-1)
+        intensity = 0.125                 % Bar light intensity (0-1)
         spotWidth = 200                 % Bar length size (um)
         spotHeight = 200                % Bar Width size (um)
-        spotSpeed = 1000                % Bar speed (um / s)
+        spotSpeed = 2000                % Bar speed (um / s)
         distance = 800                  % Bar distance (um)
         angleOffset = 0                 % Angle set offset (deg)
         numberOfAngles = 8              % Number of angles to stimulate
-        numberOfCycles = 5              % Number of times through the set
+        numberOfCycles = 10              % Number of times through the set
     end
     
     properties (Hidden)
