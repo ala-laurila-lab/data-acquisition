@@ -1,4 +1,4 @@
-classdef FlashingDots < sa_labs.protocols.StageProtocol & sa_labs.common.ProtocolLogger
+classdef SpatialUniformityCheck < sa_labs.protocols.StageProtocol & sa_labs.common.ProtocolLogger
     
         
     properties
