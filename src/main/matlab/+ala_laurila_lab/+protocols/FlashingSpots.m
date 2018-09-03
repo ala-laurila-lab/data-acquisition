@@ -4,7 +4,7 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
     properties
         %times in ms
         preTime = 500                   % Spot leading duration (ms)
-        
+        stimTime = 16.7 
         tailTime = 500                  % Spot trailing duration (ms)
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         % 
@@ -15,7 +15,6 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
     
     properties (Hidden)
         version = 1
-        stimTime = 16.7 
         stimTimeInit = 16.7                 % initial spot duration (ms)
         numberOfCombinations = 5;        % 
         order                           % current presetnation order
