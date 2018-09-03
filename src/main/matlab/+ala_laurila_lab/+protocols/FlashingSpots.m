@@ -40,10 +40,15 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
             % Generate points on a grid
-            obj.intensities = logspace(log10(0.0625), log10(1), 5);
-            obj.spotSizes = obj.spotSize * ones(1, 5);
-            obj.durations = obj.stimTimeInit * 2.^(4:-1:0);
-            
+            if obj.temporal
+                obj.intensities = logspace(log10(0.0625), log10(1), 5);
+                obj.spotSizes = obj.spotSize * ones(1, 5);
+                obj.durations = obj.stimTimeInit * 2.^(4:-1:0);
+            else
+                obj.intensities = [1, 0.61, 0.5, 0.47, 0.46];
+                obj.spotSizes = 200:100:600;
+                obj.durations = obj.stimTimeInit*ones(1, 5);
+            end
             % Start with the default order
             obj.order = 1:obj.numberOfCombinations;
             
