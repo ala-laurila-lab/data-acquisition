@@ -10,7 +10,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         
         filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
         filterWheelAttentuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
-        filterWheelDefaultValue = 3;
+        filterWheelDefaultValue = 6;
         
         projectorColorMode = 'standard'
         
