@@ -5,18 +5,16 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
         %times in ms
         preTime = 500                   % Spot leading duration (ms)
         stimTime = 16.7 
-        tailTime = 500                  % Spot trailing duration (ms)
+        tailTime = 1000                  % Spot trailing duration (ms)
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         % 
         randomOrdering = false;         % ramdom presentation order
-        temporal = true;
         
     end
     
     properties (Hidden)
-        version = 1
-        stimTimeInit = 16.7                 % initial spot duration (ms)
-        numberOfCombinations = 5;        % 
+        version = 2
+        numberOfCombinations
         order                           % current presetnation order
         combIdx
         durations
@@ -39,17 +37,16 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
             obj.logPrepareRun();
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
-            % Generate points on a grid
-            if obj.temporal
-                obj.intensities = logspace(log10(0.0625), log10(1), 5);
-                obj.spotSizes = obj.spotSize * ones(1, 5);
-                obj.durations = obj.stimTimeInit * 2.^(4:-1:0);
-            else
-                obj.intensities = [1, 0.61, 0.5, 0.47, 0.46];
-                obj.spotSizes = 200:100:600;
-                obj.durations = obj.stimTimeInit*ones(1, 5);
-            end
+            % Temporal variation
+            obj.intensities = logspace(log10(0.0625), log10(1), 5);
+            obj.spotSizes = obj.spotSize * ones(1, 5);
+            obj.durations = obj.stimTime * 2.^(4:-1:0);
+            % Spatial variation
+            obj.intensities = [obj.intensities, 0.5, 0.46];  % Fixed amount of light for a 90 um sigma spatial RF when moving from 200 um spot to a 400 and 600 um spot, respectivley.
+            obj.spotSizes = [obj.spotSizes, (2:3)*obj.spotSize];
+            obj.durations = [obj.durations, obj.stimTime, obj.stimTime];
             % Start with the default order
+            obj.numberOfCombinations = numel(obj.intensities);
             obj.order = 1:obj.numberOfCombinations;
             
         end
