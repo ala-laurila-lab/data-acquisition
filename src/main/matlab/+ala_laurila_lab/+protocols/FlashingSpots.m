@@ -13,7 +13,7 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
     end
     
     properties (Hidden)
-        version = 2
+        version = 3                     % removed spots of different size
         numberOfCombinations
         order                           % current presetnation order
         combIdx
@@ -41,10 +41,7 @@ classdef FlashingSpots < sa_labs.protocols.StageProtocol & sa_labs.common.Protoc
             obj.intensities = logspace(log10(0.0625), log10(1), 5);
             obj.spotSizes = obj.spotSize * ones(1, 5);
             obj.durations = obj.stimTime * 2.^(4:-1:0);
-            % Spatial variation
-            obj.intensities = [obj.intensities, 0.5, 0.46];  % Fixed amount of light for a 90 um sigma spatial RF when moving from 200 um spot to a 400 and 600 um spot, respectivley.
-            obj.spotSizes = [obj.spotSizes, (2:3)*obj.spotSize];
-            obj.durations = [obj.durations, obj.stimTime, obj.stimTime];
+            
             % Start with the default order
             obj.numberOfCombinations = numel(obj.intensities);
             obj.order = 1:obj.numberOfCombinations;
