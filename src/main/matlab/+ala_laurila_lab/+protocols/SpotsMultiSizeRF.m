@@ -8,22 +8,21 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
         tailTime = 1000                 % Spot trailing duration (ms)
         minSpotSize = 200;              % min spot diameter (um)
         maxSpotSize = 600;              % max spot diameter (um)
-        nSizes = 3;                     % n spot sizes
-        rfSigma = 80;                   % Assumed sigma for the spatial RF
+        rfSigma = 70;                   % Assumed sigma for the spatial RF
         numberOfRepetions = 30;         % number of epochs for each size
-        randomOrdering = false;         % ramdom presentation order
+        randomOrdering = true;          % ramdom presentation order
         
     end
     
     properties (Hidden)
-        version = 1                     % removed spots of different size
+        version = 2                     % 3 intensities for each spot size
         numberOfCombinations
         order                           % current presetnation order
         combIdx
         intensities
         intensity                       % current intensity
         spotSizes
-        size                            % current size
+        spotSize                        % current size
         responsePlotMode = 'cartesian';
         responsePlotSplitParameter = 'combIdx';
     end
@@ -39,12 +38,17 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
             % Determine spot sizes
-            obj.spotSizes = linspace(obj.minSpotSize, obj.maxSpotSize, obj.nSizes);
+            spotSizesTmp = linspace(obj.minSpotSize, obj.maxSpotSize, 3);
+            obj.spotSizes = repelem(spotSizesTmp, 3);
             
-            % Set the intensity based on the fraction of RF covered
-            r2 = (obj.spotSizes./2).^2 / obj.rfSigma^2;
+            % Set the intensity ratio based on the fraction of RF covered
+            r2 = (spotSizesTmp./2).^2 / obj.rfSigma^2;
             rfFracs = 1 - exp(-r2/2);
-            obj.intensities = rfFracs(1) ./ rfFracs;
+            percentChange = rfFracs(1) / rfFracs(2);
+            intensitiesTmp = percentChange.^(3:-1:0);
+            obj.intensities = [intensitiesTmp(2:end), ...
+                               intensitiesTmp(1:end-1), ...
+                               intensitiesTmp(1:end-1)];
 
             % Start with the default order
             obj.numberOfCombinations = numel(obj.intensities);
@@ -64,11 +68,11 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
             % Get the current position and intensity
             obj.combIdx = obj.order(index);
             obj.intensity = obj.intensities(obj.combIdx);
-            obj.size = obj.spotSizes(obj.combIdx);
+            obj.spotSize = obj.spotSizes(obj.combIdx);
             
             epoch.addParameter('combIdx', obj.combIdx);
             epoch.addParameter('intensity', obj.intensity);
-            epoch.addParameter('size', obj.size);
+            epoch.addParameter('spotSize', obj.spotSize);
             
             % Call the base method.
             prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
@@ -79,7 +83,7 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
             p = stage.core.Presentation((obj.preTime + obj.stimTime + obj.tailTime) * 1e-3);
 
             spot = stage.builtin.stimuli.Ellipse();
-            spot.radiusX = round(obj.um2pix(obj.size / 2));
+            spot.radiusX = round(obj.um2pix(obj.spotSize / 2));
             spot.radiusY = spot.radiusX;
             spot.color = obj.intensity;
             canvasSize = obj.rig.getDevice('Stage').getCanvasSize();
