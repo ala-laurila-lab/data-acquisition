@@ -6,8 +6,6 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
         preTime = 500                   % Spot leading duration (ms)
         stimTime = 16.7                 % flash duration
         tailTime = 1000                 % Spot trailing duration (ms)
-        minSpotSize = 200;              % min spot diameter (um)
-        maxSpotSize = 600;              % max spot diameter (um)
         rfSigma = 70;                   % Assumed sigma for the spatial RF
         numberOfRepetions = 30;         % number of epochs for each size
         randomOrdering = true;          % ramdom presentation order
@@ -15,7 +13,7 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
     end
     
     properties (Hidden)
-        version = 2                     % 3 intensities for each spot size
+        version = 3                     % 2 intensities for 5 spot sizes
         numberOfCombinations
         order                           % current presetnation order
         combIdx
@@ -38,17 +36,16 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
             % Determine spot sizes
-            spotSizesTmp = linspace(obj.minSpotSize, obj.maxSpotSize, 3);
-            obj.spotSizes = repelem(spotSizesTmp, 3);
+            spotSizesTmp = [150, 200, 275, 400, 600];
+            obj.spotSizes = repelem(spotSizesTmp, 2);
             
             % Set the intensity ratio based on the fraction of RF covered
             r2 = (spotSizesTmp./2).^2 / obj.rfSigma^2;
             rfFracs = 1 - exp(-r2/2);
-            percentChange = rfFracs(1) / rfFracs(2);
-            intensitiesTmp = percentChange.^(3:-1:0);
-            obj.intensities = [intensitiesTmp(2:end), ...
-                               intensitiesTmp(1:end-1), ...
-                               intensitiesTmp(1:end-1)];
+            intensitiesTmp = rfFracs(1) ./ rfFracs;
+            obj.intensities = nan(1, numel(obj.spotSizes));
+            obj.intensities(1:2:end) = intensitiesTmp;
+            obj.intensities(2:2:end) = intensitiesTmp*0.66;
 
             % Start with the default order
             obj.numberOfCombinations = numel(obj.intensities);
