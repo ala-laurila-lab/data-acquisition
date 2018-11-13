@@ -45,7 +45,7 @@ classdef SpotsMultiSizeRF < sa_labs.protocols.StageProtocol & sa_labs.common.Pro
             intensitiesTmp = rfFracs(1) ./ rfFracs;
             obj.intensities = nan(1, numel(obj.spotSizes));
             obj.intensities(1:2:end) = intensitiesTmp;
-            obj.intensities(2:2:end) = intensitiesTmp*0.66;
+            obj.intensities(2:2:end) = intensitiesTmp*0.5;
 
             % Start with the default order
             obj.numberOfCombinations = numel(obj.intensities);
