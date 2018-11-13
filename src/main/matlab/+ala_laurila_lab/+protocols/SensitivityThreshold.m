@@ -7,13 +7,14 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
         stimTime = 16.7 
         tailTime = 1000                  % Spot trailing duration (ms)
         spotSize = 200;                 % spot diameter (um)
-        numberOfRepetions = 30;         % 
-        randomOrdering = false;         % ramdom presentation order
+        numberOfRepetions = 30;         %
+        numberOfIntensities = 5;
+        randomOrdering = true;         % ramdom presentation order
         
     end
     
     properties (Hidden)
-        version = 1
+        version = 2                     % add nIntensities choise
         numberOfCombinations
         order                           % current presetnation order
         combIdx
@@ -38,9 +39,10 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
             prepareRun@sa_labs.protocols.StageProtocol(obj);
             
             % Intensity variation
-            obj.intensities = logspace(log10(0.0625), log10(1), 5);
-            obj.spotSizes = obj.spotSize * ones(1, 5);
-            obj.durations = obj.stimTime * ones(1, 5);
+            nIntensities = obj.numberOfIntensities;
+            obj.intensities = logspace(log10(0.0625), log10(1), nIntensities);
+            obj.spotSizes = obj.spotSize * ones(1, nIntensities);
+            obj.durations = obj.stimTime * ones(1, nIntensities);
             
             % Start with the default order
             obj.numberOfCombinations = numel(obj.intensities);
