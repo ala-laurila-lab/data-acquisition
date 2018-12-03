@@ -9,6 +9,7 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         %
         numberOfIntensities = 5;
+        lowestIntensity = 0.0625;
         randomOrdering = true;         % ramdom presentation order
         
     end
@@ -40,7 +41,7 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
             
             % Intensity variation
             nIntensities = obj.numberOfIntensities;
-            obj.intensities = logspace(log10(0.0625), log10(1), nIntensities);
+            obj.intensities = logspace(log10(obj.lowestIntensity), log10(1), nIntensities);
             obj.spotSizes = obj.spotSize * ones(1, nIntensities);
             obj.durations = obj.stimTime * ones(1, nIntensities);
             
