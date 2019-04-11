@@ -34,7 +34,6 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
         function prepareEpoch(obj, epoch)
             prepareEpoch@sa_labs.protocols.StageProtocol(obj, epoch);
 
-            epoch.addParameter('resolution', obj.resolution);
             if ~ isempty(obj.rig.getDevices('LightCrafter'))
                 patternRate = obj.rig.getDevice('LightCrafter').getPatternRate();
             end
@@ -58,6 +57,13 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
             obj.grating(radius > obj.spotSize/2) = 0;
             obj.surround = ones(obj.resolution, obj.resolution);
             obj.surround(radius <= obj.spotSize/2) = 0;
+            
+            epoch.addParameter('resolution', obj.resolution);
+            epoch.addParameter('frequency', obj.resolution);
+            epoch.addParameter('contrast', obj.resolution);
+            epoch.addParameter('contrastMean', obj.resolution);
+            epoch.addParameter('nSpatialPeriods', obj.resolution);
+            
         end
 
         function p = createPresentation(obj)
@@ -78,14 +84,14 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
             % add controllers
             % dimensions are swapped correctly
             checkerboardImageController = stage.builtin.controllers.PropertyController(checkerboard, 'imageMatrix',...
-                @(state)getImageMatrix(obj, state.frame - preFrames, [obj.resolution, obj.resolution]));
+                @(state)getImageMatrix(obj, state.frame - preFrames));
             p.addController(checkerboardImageController);
             
             obj.setOnDuringStimController(p, checkerboard);
             
             % TODO: verify X vs Y in matrix
             
-            function i = getImageMatrix(obj, frame, dimensions)
+            function i = getImageMatrix(obj, frame)
                 if frame < 0 %pre frames. frame 0 starts stimPts
                     intensity = obj.meanLevel;
                 else %in stim frames
