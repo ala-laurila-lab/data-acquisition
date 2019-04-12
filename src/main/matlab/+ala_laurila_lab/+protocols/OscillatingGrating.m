@@ -15,7 +15,7 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
     end
 
     properties (Hidden)
-        version = 1;
+        version = 2;
         
         resolution = 40;
         responsePlotMode = 'cartesian';
@@ -41,7 +41,7 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
             % Temporal oscillations
             nFrames = ceil((obj.stimTime/1000) * patternRate);
             amplitude = obj.contrast * obj.contrastMean;
-            time = (0:(nFrames-1)) / patternRate;
+            time = (1:nFrames) / patternRate;
             obj.waveVec = amplitude * sin(2*pi*obj.frequency*time);
             obj.waveVec = obj.waveVec; % add mean
             
@@ -87,18 +87,17 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
                 @(state)getImageMatrix(obj, state.frame - preFrames));
             p.addController(checkerboardImageController);
             
-            obj.setOnDuringStimController(p, checkerboard);
+%             obj.setOnDuringStimController(p, checkerboard);
             
             % TODO: verify X vs Y in matrix
             
             function i = getImageMatrix(obj, frame)
-                if frame < 0 %pre frames. frame 0 starts stimPts
-                    intensity = obj.meanLevel;
-                else %in stim frames
-                    intensity = obj.grating * obj.waveVec(frame+1);
-                    intensity = intensity + obj.surround*(obj.meanLevel-0.5)*2;
+                intensity = abs(obj.grating)*obj.contrastMean;
+                if frame >= 0
+                    intensity = intensity + obj.grating * obj.waveVec(frame+1);
                 end
-                i = uint8(255 * (intensity+1)/2);
+                intensity = intensity + obj.surround * obj.meanLevel;
+                i = uint8(255 * intensity);
             end
             
 
