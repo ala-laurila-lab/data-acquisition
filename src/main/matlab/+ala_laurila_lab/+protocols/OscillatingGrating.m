@@ -59,10 +59,10 @@ classdef OscillatingGrating < sa_labs.protocols.StageProtocol
             obj.surround(radius <= obj.spotSize/2) = 0;
             
             epoch.addParameter('resolution', obj.resolution);
-            epoch.addParameter('frequency', obj.resolution);
-            epoch.addParameter('contrast', obj.resolution);
-            epoch.addParameter('contrastMean', obj.resolution);
-            epoch.addParameter('nSpatialPeriods', obj.resolution);
+            epoch.addParameter('frequency', obj.frequency);
+            epoch.addParameter('contrast', obj.contrast);
+            epoch.addParameter('contrastMean', obj.contrastMean);
+            epoch.addParameter('nSpatialPeriods', obj.nSpatialPeriods);
             
         end
 
