@@ -3,7 +3,7 @@ classdef MultipleLightSteps < sa_labs.protocols.StageProtocol & sa_labs.common.P
     properties
         %times in ms
         preTime = 500	% Spot leading duration (ms)
-        stimTime = 100	% Spot duration (ms)
+        singleStimTime = 100	% Spot duration (ms)
         tailTime = 1500	% Spot trailing duration (ms)
         numberOfStims = 4
         stimulusInterval = 300
@@ -16,13 +16,17 @@ classdef MultipleLightSteps < sa_labs.protocols.StageProtocol & sa_labs.common.P
     properties (Hidden)
         version = 1
         epochIdx = 1
-        
+
         responsePlotMode = 'cartesian';
         responsePlotSplitParameter = 'epochIdx';
     end
     
     properties (Hidden, Dependent)
         totalNumEpochs
+    end
+    
+    properties (Dependent)
+        stimTime
     end
     
     methods
@@ -44,7 +48,7 @@ classdef MultipleLightSteps < sa_labs.protocols.StageProtocol & sa_labs.common.P
         end
         
         function p = createPresentation(obj)
-            p = stage.core.Presentation((obj.preTime + obj.numberOfStims*obj.stimTime + (obj.numberOfStims-1)*obj.stimulusInterval + obj.tailTime) * 1e-3);
+            p = stage.core.Presentation((obj.preTime + obj.stimTime + obj.tailTime) * 1e-3);
             
             canvasSize = obj.rig.getDevice('Stage').getCanvasSize();
             
@@ -71,10 +75,13 @@ classdef MultipleLightSteps < sa_labs.protocols.StageProtocol & sa_labs.common.P
             end
             
             controller = stage.builtin.controllers.PropertyController(stageObject, 'opacity', ...
-                @(s)turnOnDuringStim(s, obj.preTime, obj.stimTime, obj.numberOfStims, obj.stimulusInterval));
+                @(s)turnOnDuringStim(s, obj.preTime, obj.singleStimTime, obj.numberOfStims, obj.stimulusInterval));
             p.addController(controller);
         end
         
+        function stimTime = get.stimTime(obj)
+            stimTime = obj.numberOfStims*obj.singleStimTime + (obj.numberOfStims-1)*obj.stimulusInterval;
+        end
         
         function totalNumEpochs = get.totalNumEpochs(obj)
             totalNumEpochs = obj.numberOfEpochs;
