@@ -8,7 +8,7 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         %
         numberOfDurations = 4;
-        shortestStimTime =500;
+        shortestStimTime =16.7;
         decrement = true;
         randomOrdering = true;         % ramdom presentation order
         
@@ -37,7 +37,7 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
         
         function prepareRun(obj)
             obj.logPrepareRun();
-            prepareRun@sa_labs.protocols.StageProtocol(obj);
+            
             
             % Intensity variation
             nDurations = obj.numberOfDurations;
@@ -45,6 +45,8 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
             
             % Start with the default order
             obj.order = 1:nDurations;
+            obj.combIdx = obj.order(1);
+            prepareRun@sa_labs.protocols.StageProtocol(obj);
             
         end
             
@@ -67,7 +69,7 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
             end
             
             epoch.addParameter('combIdx', obj.combIdx);
-            epoch.addParameter('duration', obj.duration);
+            epoch.addParameter('duration', obj.durations(obj.combIdx));
             epoch.addParameter('intensity', obj.intensity);
             
             % Call the base method.
