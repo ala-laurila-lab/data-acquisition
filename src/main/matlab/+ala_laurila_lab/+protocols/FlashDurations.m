@@ -7,8 +7,9 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
         tailTime = 1000                  % Spot trailing duration (ms)
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         %
-        numberOfDurations = 4;
-        shortestStimTime =16.7;
+        numberOfDurations = 3;
+        scalingFactor = 2;
+        shortestStimDuration = 1;       % measured in frames
         decrement = true;
         randomOrdering = true;         % ramdom presentation order
         
@@ -41,7 +42,7 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
             
             % Intensity variation
             nDurations = obj.numberOfDurations;
-            obj.durations = obj.shortestStimTime .* 2.^(0:(nDurations-1));
+            obj.durations = 16.7 .* obj.shortestStimDuration .* obj.scalingFactor.^(0:(nDurations-1));
             
             % Start with the default order
             obj.order = 1:nDurations;
