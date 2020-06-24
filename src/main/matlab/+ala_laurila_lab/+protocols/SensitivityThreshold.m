@@ -9,13 +9,14 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
         spotSize = 200;                 % spot diameter (um)
         numberOfRepetions = 30;         %
         numberOfIntensities = 5;
-        lowestIntensity = 0.0625;
+        scalingFactor = 2;
+        highestIntensity = 1;
         randomOrdering = true;         % ramdom presentation order
         
     end
     
     properties (Hidden)
-        version = 2                     % add nIntensities choise
+        version = 3                     % add scaling factor option
         numberOfCombinations
         order                           % current presetnation order
         combIdx
@@ -26,7 +27,7 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
         spotSizes
         size                            % current size
         responsePlotMode = 'cartesian';
-        responsePlotSplitParameter = 'combIdx';
+        responsePlotSplitParameter = 'intensity';
     end
     
     properties (Hidden, Dependent)
@@ -41,7 +42,8 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
             
             % Intensity variation
             nIntensities = obj.numberOfIntensities;
-            obj.intensities = logspace(log10(obj.lowestIntensity), log10(1), nIntensities);
+            obj.intensities = obj.highestIntensity * obj.scalingFactor.^(-nIntensities+1:0);
+            %obj.intensities = logspace(log10(obj.lowestIntensity), log10(1), nIntensities);
             obj.spotSizes = obj.spotSize * ones(1, nIntensities);
             obj.durations = obj.stimTime * ones(1, nIntensities);
             
@@ -69,7 +71,7 @@ classdef SensitivityThreshold < sa_labs.protocols.StageProtocol & sa_labs.common
             
             epoch.addParameter('combIdx', obj.combIdx);
             epoch.addParameter('duration', obj.duration);
-            epoch.addParameter('intensity', obj.intensity);
+            epoch.addParameter('intensity', obj.intensities(obj.combIdx));
             epoch.addParameter('size', obj.size);
             
             % Call the base method.

@@ -16,14 +16,14 @@ classdef FlashDurations < sa_labs.protocols.StageProtocol & sa_labs.common.Proto
     end
     
     properties (Hidden)
-        version = 1                     % add nIntensities choise
+        version = 1                     % 
         order                           % current presetnation order
         combIdx
         durations
         duration                        % current duration
         intensity                       % current intensity
         responsePlotMode = 'cartesian';
-        responsePlotSplitParameter = 'combIdx';
+        responsePlotSplitParameter = 'duration';
     end
     
     properties (Hidden, Dependent)
