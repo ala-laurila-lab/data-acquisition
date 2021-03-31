@@ -7,7 +7,7 @@ classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRigOneAmp
             obj.addProjector();
             obj.addOscilloscopeTrigger();
             obj.addRigSwitches();
-            obj.addFilterWheel();
+            obj.addFilterWheels();
             obj.addOptometer();
         end
         

@@ -7,7 +7,7 @@ classdef AaltoPatchRigOneAmp < ala_laurila_lab.rigs.AaltoPatchRig
             obj.addProjector();
             obj.addRigSwitches();
             obj.addOscilloscopeTrigger();
-            obj.addFilterWheel();
+            obj.addFilterWheels();
             obj.addTempratureController();
         end
         

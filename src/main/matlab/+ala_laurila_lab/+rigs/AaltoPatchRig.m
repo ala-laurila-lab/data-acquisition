@@ -8,9 +8,13 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         calibrationDataUnit = 'aalto-patch-rig-data'
         calibrationLogUnit = 'aalto-patch-rig-log'
         
-        filterWheelNdfValues = [1, 2, 3, 4, 5, 6];
-        filterWheelAttentuationValues = [0.0105, 8.0057e-05, 6.5631e-06, 5.5485e-07, 5.5485e-08, 5.5485e-09];
-        filterWheelDefaultValue = 6;
+        firstFilterWheelNdfValues = [1, 2, 3, 4, 5, 6];
+        firstFilterWheelAttentuationValues = [1e-1, 1e-2, 1e-3, 1e-4, 1, 1];
+        firstFilterWheelDefaultValue = 4;
+        
+        secondFilterWheelNdfValues = [1, 2, 3, 4, 5, 6];
+        secondFilterWheelAttentuationValues = [1, 1, 1e-3, 1e-4, 1, 1];
+        secondFilterWheelDefaultValue = 4;
         
         projectorColorMode = 'standard'
         
@@ -50,7 +54,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addProjector();
             obj.addRigSwitches();
             obj.addOscilloscopeTrigger();
-            obj.addFilterWheel();
+            obj.addFilterWheels();
             obj.addTempratureController();
         end
         
@@ -119,13 +123,18 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addDevice(trigger);
         end
         
-        function addFilterWheel(obj)
-            ndfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice('COM11');
-            ndfWheel.addConfigurationSetting('filterWheelNdfValues', obj.filterWheelNdfValues);
-            ndfWheel.addResource('filterWheelAttenuationValues', obj.filterWheelAttentuationValues);
-            ndfWheel.addResource('defaultNdfValue', obj.filterWheelDefaultValue);
+        function addFilterWheels(obj)
+            firstNdfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice('COM11', 1);
+            firstNdfWheel.addConfigurationSetting('filterWheelNdfValues', obj.firstFilterWheelNdfValues);
+            firstNdfWheel.addResource('filterWheelAttenuationValues', obj.firstFilterWheelAttentuationValues);
+            firstNdfWheel.addResource('defaultNdfValue', obj.firstFilterWheelDefaultValue);
+            obj.addDevice(firstNdfWheel);
             
-            obj.addDevice(ndfWheel);
+            secondNdfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice('COM12', 2);
+            secondNdfWheel.addConfigurationSetting('filterWheelNdfValues', obj.secondFilterWheelNdfValues);
+            secondNdfWheel.addResource('filterWheelAttenuationValues', obj.secondFilterWheelAttentuationValues);
+            secondNdfWheel.addResource('defaultNdfValue', obj.secondFilterWheelDefaultValue);
+            obj.addDevice(secondNdfWheel);
         end
         
         function service = getCalibrationService(obj)
