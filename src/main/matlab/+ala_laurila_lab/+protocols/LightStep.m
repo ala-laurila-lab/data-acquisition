@@ -6,7 +6,7 @@ classdef LightStep < sa_labs.protocols.stage.LightStep  & sa_labs.common.Protoco
         
         function prepareRun(obj)
             prepareRun@sa_labs.protocols.stage.LightStep(obj);
-            obj.logPrepareRun();
+             obj.logPrepareRun();
         end
         
         function prepareEpoch(obj, epoch)
