@@ -1,6 +1,8 @@
 classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
     
-
+    properties(Constant)
+        EMULATED_COM_PORT = 0
+    end
     
     methods
         
@@ -22,16 +24,31 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             obj.calibrationLogUnit = 'simulated-rig-log';
             
             obj.hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
-            'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
-            'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
-            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
-
+                'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
+                'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
+                'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
+            
         end
         
         function prepareRigDescription(obj)
             obj.addAmplifier();
             obj.addProjector();
             obj.addOptometer();
+            obj.addFilterWheels();
+        end
+        
+        function addFilterWheels(obj)
+            firstNdfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice(ala_laurila_lab.rigs.SimulatedRigWithStage.EMULATED_COM_PORT, 1);
+            firstNdfWheel.addConfigurationSetting('filterWheelNdfValues', obj.firstFilterWheelNdfValues);
+            firstNdfWheel.addResource('filterWheelAttenuationValues', obj.firstFilterWheelAttentuationValues);
+            firstNdfWheel.addResource('defaultNdfValue', obj.firstFilterWheelDefaultValue);
+            obj.addDevice(firstNdfWheel);
+            
+            secondNdfWheel = sa_labs.devices.NeutralDensityFilterWheelDevice(ala_laurila_lab.rigs.SimulatedRigWithStage.EMULATED_COM_PORT, 2);
+            secondNdfWheel.addConfigurationSetting('filterWheelNdfValues', obj.secondFilterWheelNdfValues);
+            secondNdfWheel.addResource('filterWheelAttenuationValues', obj.secondFilterWheelAttentuationValues);
+            secondNdfWheel.addResource('defaultNdfValue', obj.secondFilterWheelDefaultValue);
+            obj.addDevice(secondNdfWheel);
         end
         
         function addAmplifier(obj)
@@ -51,20 +68,20 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             import symphonyui.core.*;
             daq = obj.daqController;
             
-            optometer = UnitConvertingDevice('Optometer', 'V').bindStream(daq.getStream('ai4'));
+            optometer = UnitConvertingDevice('Optometer UDTS470', 'V').bindStream(daq.getStream('ai4'));
             obj.addDevice(optometer);
         end
-
-         function [rstar, mstar, sstar] = getIsomerizations(obj, protocol, pattern)
+        
+        function [rstar, mstar, sstar] = getIsomerizations(obj, protocol, pattern)
             rstar = [];
             mstar = [];
             sstar = [];
             
             % validate all the parameter
-
+            
             % validate the mouse arguments
-         end
-         
+        end
+        
         function tf = toBeHidden(obj, name)
             tf = ismember(name,  obj.hiddenProperties);
         end
@@ -73,6 +90,7 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             lightCrafter = ala_laurila_lab.devices.MockedLightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
+            lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [10, 20, 50, 200])
             obj.addDevice(lightCrafter);
         end
     end
