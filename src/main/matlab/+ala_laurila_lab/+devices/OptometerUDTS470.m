@@ -2,53 +2,53 @@ classdef OptometerUDTS470 < handle
     
     properties (Constant)
         OUTPUT_MAX = 2500 % mV
-        GAIN_MAX = 10^10
-        GAIN_MIN = 10^3
-        GAIN_STEP_MULTIPLIER = 10
-        MICROWATT_PER_MILLIVOLT = 1 / 100;
+        RNG_MAX = 10^4
+        RNG_MIN = 10^4
+        RNG_STEP_MULTIPLIER = 10
+        MICROWATT_PER_MILLIVOLT = 1/100;
     end
     
     properties
-        gain
+        range
     end
     
     methods
         
-        function obj = OptometerUDTS470(initialGain)
+        function obj = OptometerUDTS470(initialrange)
             if nargin < 1
-                initialGain = obj.GAIN_MIN;
+                initialrange = obj.RNG_MAX;
             end
-            obj.gain = initialGain;
+            obj.range = initialrange;
         end
         
-        function increaseGain(obj)
-            obj.gain = obj.gain * obj.GAIN_STEP_MULTIPLIER;
+        function increaseRange(obj)
+            obj.range = obj.range * obj.RNG_STEP_MULTIPLIER;
         end
         
-        function decreaseGain(obj)
-            obj.gain = obj.gain / obj.GAIN_STEP_MULTIPLIER;
+        function decreaseRange(obj)
+            obj.range = obj.range / obj.RNG_STEP_MULTIPLIER;
         end
         
-        function set.gain(obj, gain)
-            if gain == obj.gain
+        function set.range(obj, range)
+            if range == obj.range
                 return;
             end
             
-            gainExponent = single(log(gain) / log(obj.GAIN_STEP_MULTIPLIER));
-            if mod(gainExponent, 1) ~= 0
+            rangeExponent = single(log(range) / log(obj.RNG_STEP_MULTIPLIER));
+            if mod(rangeExponent, 1) ~= 0
                 error('Bad gain value.');
             end
             
-            if gain > obj.GAIN_MAX || gain < obj.GAIN_MIN
-                error('Requested gain is out of bounds.');  
+            if range > obj.RNG_MAX || range < obj.RNG_MIN
+                error('Requested range is out of bounds.');  
             end
             
             presenter = appbox.MessagePresenter( ...
-                ['Set optometer gain to ' num2str(obj.GAIN_STEP_MULTIPLIER) '^' num2str(gainExponent)], ...
+                ['Set optometer range to MAN X ' num2str(obj.RNG_STEP_MULTIPLIER) '^' num2str(rangeExponent)], ...
                 'Optometer', ...
                 'button1', 'OK');
             presenter.goWaitStop();
-            obj.gain = gain;
+            obj.range = range;
         end
         
     end

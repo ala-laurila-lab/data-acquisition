@@ -15,7 +15,7 @@ classdef AaltoPatchRigCailbration < ala_laurila_lab.rigs.AaltoPatchRigOneAmp
             import symphonyui.builtin.devices.*;
             import symphonyui.core.*;
             daq = obj.daqController ;
-            optometer = UnitConvertingDevice('Optometer', 'V').bindStream(daq.getStream('ai6'));
+            optometer = UnitConvertingDevice('Optometer UDTS470', 'V').bindStream(daq.getStream('ai6'));
             obj.addDevice(optometer);
         end
     end
