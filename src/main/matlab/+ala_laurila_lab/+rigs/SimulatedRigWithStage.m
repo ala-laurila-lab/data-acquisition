@@ -91,6 +91,7 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
             lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [10, 20, 50, 200])
+            lightCrafter.addConfigurationSetting('ledTypes', {'Blue led'});
             obj.addDevice(lightCrafter);
         end
     end
