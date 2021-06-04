@@ -210,12 +210,15 @@ classdef NDFCalibration < symphonyui.ui.Module
             
             if strcmp(obj.mode, 'manual')
                 set(obj.measurementTable, 'Enabled', 'off');
+                obj.setBackground(obj.getLedCurrent());
                 obj.setNdf();
-                row = obj.measurementTable.SelectedRows;
-                input = obj.measurementTable.Data{row, 1};
-                obj.setBackground(input);
                 set(obj.measurementTable, 'Enabled', 'on');
             end
+        end
+        
+        function led = getLedCurrent(obj)
+            row = obj.measurementTable.SelectedRows;
+            led = obj.measurementTable.Data{row, 1};
         end
        
         
@@ -342,7 +345,7 @@ classdef NDFCalibration < symphonyui.ui.Module
             set(obj.measurementTable, 'Enabled', 'off');
             set(obj.statusLabel, 'String', ['As a next step. Setting the NDF to ' num2str(ndf) ' ndf ....']);
             obj.ndfWheel.setNdfValue(ndf);
-            set(obj.statusLabel, 'String', ['Ready to measure the power for ' num2str(ndf) ' ndf ...']);
+            set(obj.statusLabel, 'String', ['Ready to measure the power for led ' num2str(obj.getLedCurrent()) ' with ndf ' num2str(ndf) ]);
             set(obj.measurementTable, 'Enabled', 'on');
         end
         
