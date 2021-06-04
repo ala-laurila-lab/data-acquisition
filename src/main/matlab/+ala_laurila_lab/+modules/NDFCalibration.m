@@ -284,7 +284,7 @@ classdef NDFCalibration < symphonyui.ui.Module
                 
                 n = numel(obj.measurementTable.getColumnData(1));
                 wheelId = obj.ndfWheel.getResource('wheelID');
-                toExponent = @(ndfMeasurement, index) arrayfun(@(x) ndfMeasurement.toExponent(x), obj.measurementTable.getColumnData(index))';
+                toExponent = @(ndfMeasurement, index) arrayfun(@(x) ndfMeasurement.toExponent(char(x)), obj.measurementTable.getColumnData(index))';
                 ndf = obj.getSelectedNdf();
                 ndfMeasurement =  ala_laurila_lab.entity.NDFMeasurement( ['wheel' num2str(wheelId) 'ndf' num2str(ndf)]);
                 ndfMeasurement.ledInput = cell2mat(obj.measurementTable.getColumnData(1))';
