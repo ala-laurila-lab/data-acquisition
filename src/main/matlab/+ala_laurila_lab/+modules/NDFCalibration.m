@@ -171,12 +171,12 @@ classdef NDFCalibration < symphonyui.ui.Module
             ndfAttenuation = obj.ndfWheel.getResource('filterWheelAttenuationValues');
             set(obj.ndfListBox, 'String', ndfValues(ndfAttenuation ~=1 ));
             set(obj.ndfListBox, 'Value', 1);
+            obj.setNdf();
             obj.setNdfAttenuation()
         end
         
         function onSelectedNdf(obj, ~, ~)
-            ndf = obj.getSelectedNdf();
-            obj.ndfWheel.setNdfValue(ndf);
+            obj.setNdf();
             obj.setNdfAttenuation()
         end
         
@@ -210,37 +210,14 @@ classdef NDFCalibration < symphonyui.ui.Module
             
             if strcmp(obj.mode, 'manual')
                 set(obj.measurementTable, 'Enabled', 'off');
-                ndf = obj.getSelectedNdf();
-                obj.ndfWheel.setNdfValue(ndf);
+                obj.setNdf();
                 row = obj.measurementTable.SelectedRows;
                 input = obj.measurementTable.Data{row, 1};
                 obj.setBackground(input);
                 set(obj.measurementTable, 'Enabled', 'on');
             end
         end
-        
-        % is not used 
-        function recordPower(obj, input, row)
-            obj.measurementTable.SelectedRows = row;
-            obj.setBackground(input);
-            set(obj.statusLabel, 'String', ['Setting the background for input ' num2str(input)]);
-            
-            pause(0.5) % seconds
-            set(obj.statusLabel, 'String', 'Measuring power' );
-            [power, unit] = obj.optometer.getReading();
-            obj.measurementTable.Data{row, 2} = power;
-            obj.measurementTable.Data{row, 3} = unit;
-            
-            set(obj.statusLabel, 'String', 'Setting the ndf wheel to empty' );
-            obj.ndfWheel.setNdfValue(obj.EMPTY_NDF);
-            set(obj.statusLabel, 'String', 'Measuring power' );
-            
-            pause(0.5); % seconds
-            [power, unit] = obj.optometer.getReading();
-            obj.measurementTable.Data{row, 4} = power;
-            obj.measurementTable.Data{row, 5} = unit;
-            set(obj.statusLabel, 'String', ['Done for input' num2str(input)]);
-        end
+       
         
         function setBackground(obj, input)
             
@@ -271,7 +248,7 @@ classdef NDFCalibration < symphonyui.ui.Module
                     promptAndSetEmptyNdf();
                 case 5
                     pause(0.1)
-                    promptAndSetNdf(obj.getSelectedNdf());
+                    promptAndSetNdf();
                 otherwise
                     return;
             end
@@ -289,17 +266,13 @@ classdef NDFCalibration < symphonyui.ui.Module
                 set(obj.measurementTable, 'Enabled', 'on');
             end
             
-            function promptAndSetNdf(ndf)
+            function promptAndSetNdf()
                 
                 if obj.ndfWheel.isManual()
-                    obj.view.showMessage(['Please ensure that NDF is set to '  num2str(ndf) ' .....']);
+                    obj.view.showMessage(['Please ensure that NDF is set to '  num2str(obj.getSelectedNdf()) ' .....']);
                 end
-                
-                set(obj.measurementTable, 'Enabled', 'off');
-                set(obj.statusLabel, 'String', ['As a next step. Setting the NDF to ' num2str(ndf) ' ndf ....']);
-                obj.ndfWheel.setNdfValue(ndf);
-                set(obj.statusLabel, 'String', ['Ready to measure the power for ' num2str(ndf) ' ndf ...']);
-                set(obj.measurementTable, 'Enabled', 'on');
+                obj.setNdf();
+
             end
         end
         
@@ -362,6 +335,15 @@ classdef NDFCalibration < symphonyui.ui.Module
                 ndfValue = ndfValues(1);
                 wheel.setNdfValue(ndfValue);
             end
+        end
+        
+        function setNdf(obj)
+            ndf = obj.getSelectedNdf();
+            set(obj.measurementTable, 'Enabled', 'off');
+            set(obj.statusLabel, 'String', ['As a next step. Setting the NDF to ' num2str(ndf) ' ndf ....']);
+            obj.ndfWheel.setNdfValue(ndf);
+            set(obj.statusLabel, 'String', ['Ready to measure the power for ' num2str(ndf) ' ndf ...']);
+            set(obj.measurementTable, 'Enabled', 'on');
         end
         
         function tf = validate(obj)
