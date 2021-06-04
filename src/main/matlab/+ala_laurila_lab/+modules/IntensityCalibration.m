@@ -216,9 +216,9 @@ classdef IntensityCalibration < symphonyui.ui.Module
             % Save the results to json file
             id =[matlab.lang.makeValidName(intensity.ledType) '' matlab.lang.makeValidName(intensity.spotSize)];
             name = [matlab.lang.makeValidName(char(datetime)) '_' id '-intensity.json'];
-            location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'intensity' filesep 'json'];
-            savejson('', intensity, [location filesep name]);
-            
+            location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'intensity'];
+            savejson('', intensity, [location filesep 'json' filesep name]);
+            savejson('', intensity, [location filesep 'latest.json']);
         end
 
     end
