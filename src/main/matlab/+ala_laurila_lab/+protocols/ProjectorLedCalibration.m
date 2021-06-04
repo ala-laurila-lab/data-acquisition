@@ -49,7 +49,7 @@ classdef ProjectorLedCalibration < sa_labs.protocols.StageProtocol
                     'FontSize', get(h, 'DefaultUicontrolFontSize'));
                 title(a, t);
                 xlabel(a, 'Output (inten.)');
-                ylabel(a, 'Power (uW)');
+                ylabel(a, 'Voltage (mv)');
                 set(a, 'Box', 'off', 'TickDir', 'out');
                 handler.userData.axesHandle = a;
                 handler.userData.gammaLineHandle = line(0, 0, 'Parent', a);
@@ -77,22 +77,7 @@ classdef ProjectorLedCalibration < sa_labs.protocols.StageProtocol
             baseline = mean(quantities(1:prePts));
             measurement = mean(quantities(measurementStart:measurementEnd));
 
-            % Change gain, if necessary.
-            outputMax = obj.optometer.OUTPUT_MAX;
-            outputMin = obj.optometer.OUTPUT_MAX / obj.optometer.GAIN_STEP_MULTIPLIER;
-            outputMin = outputMin * 0.8;
-
-            if measurement > outputMax && obj.optometer.gain < obj.optometer.GAIN_MAX
-                obj.optometer.increaseGain();
-                return;
-            elseif measurement < outputMin && obj.optometer.gain > obj.optometer.GAIN_MIN
-                obj.optometer.decreaseGain();
-                return;
-            end
-
-            % No gain adjustments were required, we can now record the measured intensity.
-            obj.measurements(obj.currentStep) = (measurement - baseline) * obj.optometer.MICROWATT_PER_MILLIVOLT * obj.optometer.gain;
-
+            obj.measurements(obj.currentStep) = (measurement - baseline);
             set(handler.userData.gammaLineHandle, 'Xdata', obj.outputs(1:obj.currentStep), 'Ydata', obj.measurements(1:obj.currentStep));
 
             axesHandle = handler.userData.axesHandle;
@@ -184,7 +169,7 @@ classdef ProjectorLedCalibration < sa_labs.protocols.StageProtocol
              
             % Save the results to json file            
             name = [matlab.lang.makeValidName(char(datetime)), '-non-linearity.json'];
-            location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'projector-led-nonlinearity'];
+            location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'projector_led_nonlinearity'];
             savejson('', linearity, [location filesep name]);
             end            
         end
