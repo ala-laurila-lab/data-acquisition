@@ -2,7 +2,7 @@ classdef NDFCalibration < symphonyui.ui.Module
     
     properties (Constant)
         UNITS = {'milli watt',  'micro watt' }
-        SPOT_DIAMETER_FOR_PROJECTOR = 200 % micron
+        SPOT_DIAMETER_FOR_PROJECTOR = 500 % micron
     end
     
     % UI handles
@@ -296,6 +296,7 @@ classdef NDFCalibration < symphonyui.ui.Module
                 ndfMeasurement.powers = cell2mat(obj.measurementTable.getColumnData(4))';
                 ndfMeasurement.powerExponent = toExponent(ndfMeasurement, 5);
                 ndfMeasurement.calibrationDate = char(date);
+                ndfMeasurement.spotDiameter = obj.SPOT_DIAMETER_FOR_PROJECTOR;
                 % validate and show err if some is missing
                 % Save the results to json file            
                 name = [matlab.lang.makeValidName(char(datetime)), '-ndf' num2str(ndf) '-calibration.json'];

@@ -22,12 +22,7 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             
             obj.calibrationDataUnit = 'simulated-rig-data';
             obj.calibrationLogUnit = 'simulated-rig-log';
-            
-            obj.hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
-                'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
-                'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
-                'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
-            
+  
         end
         
         function prepareRigDescription(obj)
@@ -90,7 +85,8 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             lightCrafter = ala_laurila_lab.devices.MockedLightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
-            lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [10, 20, 50, 200])
+            lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [100, 100, 100])
+            lightCrafter.addConfigurationSetting('ledTypes', {'Blue led'});
             obj.addDevice(lightCrafter);
         end
     end

@@ -23,6 +23,7 @@ classdef LightStep < sa_labs.protocols.stage.LightStep  & sa_labs.common.Protoco
             completeRun@sa_labs.protocols.stage.LightStep(obj);
             obj.logCompleteRun();
         end
+        
     end
 end
 
