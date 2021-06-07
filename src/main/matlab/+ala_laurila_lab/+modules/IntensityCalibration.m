@@ -116,7 +116,12 @@ classdef IntensityCalibration < symphonyui.ui.Module
                 'Style', 'pushbutton', ...
                 'String', 'Save', ...
                 'Callback',  @obj.onSave);
-            set(buttonLayout, 'Widths', [150]);
+            uicontrol( ...
+                'Parent', buttonLayout, ...
+                'Style', 'pushbutton', ...
+                'String', 'View data', ...
+                'Callback',  @obj.onViewData);
+            set(buttonLayout, 'Widths', [120 120]);
             set(mainLayout, 'Heights', [250 30 ]);
         end
         
@@ -132,7 +137,7 @@ classdef IntensityCalibration < symphonyui.ui.Module
             a = obj.acquisitionService;
             obj.addListener(a, 'SetProtocolProperties', @obj.onServiceSetProtocol);
             obj.addListener(a, 'SelectedProtocol', @obj.onServiceSetProtocol);
-            obj.setPropertiesFromProtocol();            
+            obj.setPropertiesFromProtocol();   
         end
         
     end
@@ -218,7 +223,21 @@ classdef IntensityCalibration < symphonyui.ui.Module
             name = [matlab.lang.makeValidName(char(datetime)) '_' id '-intensity.json'];
             location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'intensity'];
             savejson('', intensity, [location filesep 'json' filesep name]);
-            savejson('', intensity, [location filesep 'latest.json']);
+            
+            if(strcmp(obj.obj.spotSize, '500 um'))
+                savejson('', intensity, [location filesep 'latest.json']);
+            end
+        end
+        
+        function onViewData(obj, ~, ~)
+            location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'intensity'];
+            intensity = dir(fullfile(location, 'json'));
+            data = {};
+
+            for i = 3 : length(intensity)
+                data{end + 1} = loadjson(fullfile(location,  'json', intensity(i).name));
+            end
+            struct2table([data{:}])
         end
 
     end
