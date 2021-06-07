@@ -214,8 +214,9 @@ classdef IntensityCalibration < symphonyui.ui.Module
             intensity.ledCurrent = get(obj.ledCurrent, 'String');
             intensity.calibratedBy = get(obj.CalibratedByText, 'String');
             intensity.calibrationDate = char(datetime);
-            intensity.power = get(obj.powerMeasured, 'String');
+            intensity.power = str2double(get(obj.powerMeasured, 'String'));
             intensity.powerExponent = obj.getPowerExponent();
+            intensity.unit = 'watt';
             
             % validate and show err if some is missing
             % Save the results to json file
@@ -224,7 +225,7 @@ classdef IntensityCalibration < symphonyui.ui.Module
             location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'intensity'];
             savejson('', intensity, [location filesep 'json' filesep name]);
             
-            if(strcmp(obj.obj.spotSize, '500 um'))
+            if(strcmp(intensity.spotSize, '500 um'))
                 savejson('', intensity, [location filesep 'latest.json']);
             end
         end
@@ -236,6 +237,7 @@ classdef IntensityCalibration < symphonyui.ui.Module
 
             for i = 3 : length(intensity)
                 data{end + 1} = loadjson(fullfile(location,  'json', intensity(i).name));
+                data{end}.calibrationDate = datetime(data{end}.calibrationDate, 'InputFormat', 'dd-MMM-yyyy hh:mm:ss');
             end
             struct2table([data{:}])
         end
