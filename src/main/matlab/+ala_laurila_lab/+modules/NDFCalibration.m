@@ -287,6 +287,8 @@ classdef NDFCalibration < symphonyui.ui.Module
                 toExponent = @(ndfMeasurement, index) arrayfun(@(x) ndfMeasurement.toExponent(char(x)), obj.measurementTable.getColumnData(index))';
                 ndf = obj.getSelectedNdf();
                 ndfMeasurement =  ala_laurila_lab.entity.NDFMeasurement( ['wheel' num2str(wheelId) 'ndf' num2str(ndf)]);
+                ndfMeasurement.wheelId = wheelId;
+                ndfMeasurement.ndfId = ndf;
                 ndfMeasurement.ledInput = cell2mat(obj.measurementTable.getColumnData(1))';
                 ndfMeasurement.ledInputExponent = ones(1, n);
                 % Power with ndf
@@ -300,9 +302,12 @@ classdef NDFCalibration < symphonyui.ui.Module
                 % validate and show err if some is missing
                 % Save the results to json file            
                 name = [matlab.lang.makeValidName(char(datetime)), '-ndf' num2str(ndf) '-calibration.json'];
-                location = [fileparts(which('aalto_rig_calibration_data_readme')) filesep 'ndf' filesep 'wheel' num2str(wheelId)];
+                
+                baseLocation = fileparts(which('aalto_rig_calibration_data_readme')) ;
+                location = [baseLocation filesep 'ndf' filesep 'wheel' num2str(wheelId)];
                 savejson('', ndfMeasurement, [location filesep name]);
                 set(obj.statusLabel, 'String', ['Saved. Measured OD for ndf ' num2str(ndf) ' is ' num2str(ndfMeasurement.opticalDensity)]);
+                
             end
         end
         
