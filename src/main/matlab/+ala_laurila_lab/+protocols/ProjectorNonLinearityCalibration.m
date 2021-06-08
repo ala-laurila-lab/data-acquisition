@@ -1,4 +1,4 @@
-classdef ProjectorLedCalibration < sa_labs.protocols.StageProtocol
+classdef ProjectorNonLinearityCalibration < sa_labs.protocols.StageProtocol
     
     properties
         

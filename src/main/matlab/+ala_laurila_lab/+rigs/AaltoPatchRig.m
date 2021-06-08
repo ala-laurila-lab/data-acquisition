@@ -21,7 +21,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
         hiddenProperties = {'meanLevel1', 'meanLevel2', 'contrast1', 'contrast2', ...
             'greenLED', 'redLED', 'uvLED', 'colorPattern2', 'colorPattern3', 'primaryObjectPattern',...
             'secondaryObjectPattern', 'backgroundPattern', 'colorCombinationMode', 'RstarIntensity1',...
-            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1', 'RstarMean'};
+            'MstarIntensity1', 'SstarIntensity1', 'RstarIntensity2', 'MstarIntensity2', 'SstarIntensity2', 'colorPattern1'};
     end
     
     methods
@@ -88,8 +88,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             lightCrafter = sa_labs.devices.LightCrafterDevice('micronsPerPixel', obj.micronsPerPixel);
             lightCrafter.setConfigurationSetting('frameTrackerPosition', obj.frameTrackerPosition);
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
-            lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [100, 100, 100, 100]);
-            lightCrafter.addConfigurationSetting('ledTypes', {'Blue led'});
+            lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [100, 100, 100]);
             lightCrafter.addConfigurationSetting('recommendedMaxLedCurrent', 160);
             obj.addDevice(lightCrafter);
         end
