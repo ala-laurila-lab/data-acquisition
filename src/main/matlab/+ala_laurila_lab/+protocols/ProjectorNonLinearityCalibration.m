@@ -71,13 +71,15 @@ classdef ProjectorNonLinearityCalibration < sa_labs.protocols.StageProtocol
 
             prePts = round(obj.preTime / 1e3 * obj.sampleRate);
             stimPts = round(obj.stimTime / 1e3 * obj.sampleRate);
+            
             measurementStart = prePts + (stimPts / 2);
             measurementEnd = prePts + stimPts;
 
-            baseline = mean(quantities(1:prePts));
-            measurement = mean(quantities(measurementStart:measurementEnd));
-
-            obj.measurements(obj.currentStep) = (measurement - baseline);
+            baseline = mean(quantities(1:prePts));            
+            measurement = mean(quantities(measurementStart:measurementEnd))
+            measurement = mean(quantities(quantities > 0.7 * measurement))
+            obj.measurements(obj.currentStep) = measurement - baseline;
+            
             set(handler.userData.gammaLineHandle, 'Xdata', obj.outputs(1:obj.currentStep), 'Ydata', obj.measurements(1:obj.currentStep));
 
             axesHandle = handler.userData.axesHandle;

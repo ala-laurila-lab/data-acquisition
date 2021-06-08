@@ -21,7 +21,8 @@ classdef CalibrationSpot < sa_labs.protocols.StageProtocol
         
         function didSetRig(obj)
             didSetRig@sa_labs.protocols.StageProtocol(obj);
-            % obj.NDF = 2;
+            obj.NDF1 = 4;
+            obj.NDF2 = 4;
             obj.blueLED = 100;
         end
 
@@ -41,6 +42,15 @@ classdef CalibrationSpot < sa_labs.protocols.StageProtocol
             totalNumEpochs = obj.numberOfEpochs;
         end
         
+        function d = getPropertyDescriptor(obj, name)
+            d = getPropertyDescriptor@sa_labs.protocols.StageProtocol(obj, name);
+            
+            switch name
+                case {'meanLevel'}
+                    d.isHidden = true;
+            end
+
+        end
     end
     
 end

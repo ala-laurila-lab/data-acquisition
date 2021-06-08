@@ -333,17 +333,27 @@ classdef NDFCalibration < symphonyui.ui.Module
             index = get(obj.ndfWheelIdListBox, 'Value');
             ids = cellstr(obj.ndfWheelIdListBox.String);
             id = str2double(ids{index});
-        end 
+        end
         
-        function ndfValue = setEmptyNdf(obj)
+        function id = getNotSelectedNdfWheelId(obj)
+            index = get(obj.ndfWheelIdListBox, 'Value');
+            ids = cellstr(obj.ndfWheelIdListBox.String);
+            id = str2double(ids{~ismember(ids, ids{index})});
+        end
+        
+        function setEmptyNdf(obj)
             for i = 1 : 2
-                wheel = obj.ndfWheels(i);
-                ndfValues = wheel.getConfigurationSetting('filterWheelNdfValues');
-                ndfAttenuation = wheel.getResource('filterWheelAttenuationValues');
-                ndfValues = ndfValues(ndfAttenuation == 1);
-                ndfValue = ndfValues(1);
-                wheel.setNdfValue(ndfValue);
+                obj.setEmptyNdfByWheel(i)
             end
+        end
+        
+        function ndfValue = setEmptyNdfByWheel(obj, wheelId)
+            wheel = obj.ndfWheels(wheelId);
+            ndfValues = wheel.getConfigurationSetting('filterWheelNdfValues');
+            ndfAttenuation = wheel.getResource('filterWheelAttenuationValues');
+            ndfValues = ndfValues(ndfAttenuation == 1);
+            ndfValue = ndfValues(1);
+            wheel.setNdfValue(ndfValue);
         end
         
         function setNdf(obj)
@@ -351,6 +361,8 @@ classdef NDFCalibration < symphonyui.ui.Module
             set(obj.measurementTable, 'Enabled', 'off');
             set(obj.statusLabel, 'String', ['As a next step. Setting the NDF to ' num2str(ndf) ' ndf ....']);
             obj.ndfWheel.setNdfValue(ndf);
+            inactiveWheel = obj.getNotSelectedNdfWheelId();
+            obj.setEmptyNdfByWheel(inactiveWheel);
             set(obj.statusLabel, 'String', ['Ready to measure the power for led ' num2str(obj.getLedCurrent()) ' with ndf ' num2str(ndf) ]);
             set(obj.measurementTable, 'Enabled', 'on');
         end
