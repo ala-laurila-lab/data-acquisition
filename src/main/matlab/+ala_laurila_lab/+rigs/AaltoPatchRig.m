@@ -90,6 +90,7 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             lightCrafter.setConfigurationSetting('frameTrackerSize', obj.frameTrackerSize);
             lightCrafter.addConfigurationSetting('ndfCalibrationLedInput', [100, 100, 100, 100]);
             lightCrafter.addConfigurationSetting('ledTypes', {'Blue led'});
+            lightCrafter.addConfigurationSetting('recommendedMaxLedCurrent', 160);
             obj.addDevice(lightCrafter);
         end
         
