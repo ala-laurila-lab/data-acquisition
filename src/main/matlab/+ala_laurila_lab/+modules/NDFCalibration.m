@@ -343,7 +343,7 @@ classdef NDFCalibration < symphonyui.ui.Module
         
         function setEmptyNdf(obj)
             for i = 1 : 2
-                obj.setEmptyNdfByWheel(i)
+                obj.setEmptyNdfByWheel(i);
             end
         end
         

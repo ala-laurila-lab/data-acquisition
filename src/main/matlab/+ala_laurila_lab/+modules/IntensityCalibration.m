@@ -237,7 +237,6 @@ classdef IntensityCalibration < symphonyui.ui.Module
 
             for i = 3 : length(intensity)
                 data{end + 1} = loadjson(fullfile(location,  'json', intensity(i).name));
-                data{end}.calibrationDate = datetime(data{end}.calibrationDate, 'InputFormat', 'dd-MMM-yyyy hh:mm:ss');
             end
             struct2table([data{:}])
         end
