@@ -14,9 +14,12 @@ properties
     spotPreFrames = 15
     spotTailFrames = 45
 
+    intensity = 0.5
     % spotIntensity = .5
     % chirpIntensity = .5
     % barIntensity = .5
+    % TODO: need to set the obj.intensity to match stimulus type every
+    % epoch
 
     numberOfFields = 20
     % numberOfChirps = 0
@@ -127,14 +130,15 @@ methods
             halfGrids = [obj.extentX, obj.extentY]/2;
             %remove any circles that don't intersect the grid rectangle
             % 1) the bounding box of the circle must intersect the rectangle
-            locs = locs(all(abs(locs) < halfGrids + s/2, 2), :);
+            locs = locs(all(abs(locs) < repmat(halfGrids, size(locs,1),1) + obj.spotSize/2, 2), :);
 
             % 2) circles near the corners might have an intersecting
             %       bounding box but not actually intersect
             % - if either of the coordinates is inside the box, it
             %       definitely intersects
             % - otherwise it must intersect the corner
-            obj.grid = locs(any(abs(locs) < halfGrids, 2) | 4*sum((abs(locs)-halfGrids).^2,2) <= s.^2 , :);
+            halfGrids = repmat(halfGrids, size(locs,1),1);
+            obj.grid = locs(any(abs(locs) < halfGrids, 2) | 4*sum((abs(locs)-halfGrids).^2,2) <= obj.spotSize.^2 , :);
 
         end
 
@@ -168,7 +172,7 @@ methods
         % index = obj.numEpochsPrepared + 1;
         % obj.trialType = obj.trialTypes(index);
         % if obj.trialType == 1
-        epoch.addParameter('trialType', "field");
+        epoch.addParameter('trialType', 'field');
 
         if obj.seed >= 0
             s = RandStream('mt19937ar','seed',obj.seed);
@@ -231,7 +235,8 @@ methods
             xy = canvasSize/2 + [cx_(i); cy_(i)];
         end
         
-        sI = obj.spotIntensity;
+%         sI = obj.spotIntensity;
+        sI = obj.intensity;
         function c = getSpotIntensity(state)
             if state.frame >= nFrames - 1
                 c = 0;
