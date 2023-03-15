@@ -3,4 +3,5 @@
 	url = https://github.com/ala-laurila-lab/calibration-module
 [submodule "lib/sa-labs-extension"]
 	path = lib/sa-labs-extension
-	url = https://github.com/schwartz-alalaurila-labs/sa-labs-extension/tree/daq-changes
+	url = https://github.com/schwartz-alalaurila-labs/sa-labs-extension
+	branch = daq-changes
