@@ -251,17 +251,17 @@ methods
         spotPre = obj.spotPreFrames;
         spotPreStim = obj.spotPreFrames+ obj.spotStimFrames;
         spotPreStimPost = obj.spotPreFrames+ obj.spotStimFrames + obj.spotTailFrames;
-        function xy = getSpotPosition(state)
-            i = min(floor(state.frame / spotPreStimPost) + 1, length(cx_));
+        grid_ = repmat(canvasSize/2,1,length(cx_)) + [cx_, cy_]';
+        function xy = getSpotPosition(state, spotPreStimPost, grid)
+            i = min(floor(state.frame / spotPreStimPost) + 1, size(grid, 2));
             % i = min(mod(state.frame, obj.spotPreFrames+ obj.spotStimFrames + obj.spotTailFrames) + 1, length(obj.cx));
             
             % canvasSize / 2 + obj.um2pix(obj.currSpot(1:2));
-            xy = canvasSize/2 + [cx_(i); cy_(i)];
+%             xy = canvasSize/2 + [cx_(i); cy_(i)];
+            xy = grid(:,i);
         end
         
-%         sI = obj.spotIntensity;
-        sI = obj.intensity;
-        function c = getSpotIntensity(state)
+        function c = getSpotIntensity(state, spotPre, spotPreStim, spotPreStimPost, intensity)
             if state.frame >= nFrames - 1
                 c = 0;
                 return
@@ -272,7 +272,7 @@ methods
             if i < spotPre || i >= spotPreStim
                 c = 0;
             else
-                c = sI;
+                c = intensity;
             end
         end
         
@@ -330,9 +330,10 @@ methods
         spot.color = 0;
         
         spotIntensity_ = stage.builtin.controllers.PropertyController(spot, 'color',...
-            @(state)getSpotIntensity(state));
+            @(state)getSpotIntensity(state, spotPre, spotPreStim, spotPreStimPost, sI));
+%         getSpotIntensity(state, spotPre, spotPreStim, spotPreStimPost, intensity)
         spotPosition = stage.builtin.controllers.PropertyController(spot, 'position',...
-            @(state)getSpotPosition(state));
+            @(state)getSpotPosition(state, spotPreStimPost, grid_));
         
         p.addStimulus(spot);
 
