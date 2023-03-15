@@ -26,9 +26,9 @@ properties
     % numberOfBars = 0
 
     gridMode = true
-    coverage =.9069                 % no overlap in spots if .9069 or lower
+    coverage =.9069                 % for grid mode, no overlap in spots if .9069 or lower
 
-    seed = -1                       % set to negative value to not use a seed, otherwise use a non-negative integer
+    seed = -1                       % non-negative integer, or negative to use global seed
 
     % spotLED
     % chirpLED
@@ -45,6 +45,8 @@ properties (Hidden)
     cy = [];
 
     grid = [];
+
+    randStream
 
     % theta = [];
 
@@ -78,6 +80,28 @@ properties (Hidden, Dependent)
 end
 
 methods
+
+    function d = getPropertyDescriptor(obj, name)
+        d = getPropertyDescriptor@sa_labs.protocols.StageProtocol(obj, name);
+        switch name
+        % case {'spotLED','chirpLED','barLED'}
+        %     d.category = '7 Projector';
+        % case {'uvLED','redLED','greenLED','blueLED','RstarIntensity1','MstarIntensity1','SstarIntensity1'}
+        %     d.isHidden = true;
+        case {'coverage'}
+            if obj.gridMode
+                d.isHidden = false;
+            else
+                d.isHidden = true;
+            end
+        % case {'RstarIntensitySpot','MstarIntensitySpot','SstarIntensitySpot',
+        %     'RstarIntensityChirp','MstarIntensityChirp','SstarIntensityChirp',
+        %     'RstarIntensityBar','MstarIntensityBar','SstarIntensityBar'}
+        %     d.category = '6 Isomerizations';
+        end
+
+    end
+
     function prepareRun(obj)
         prepareRun@sa_labs.protocols.StageProtocol(obj);
 
@@ -142,8 +166,15 @@ methods
 
         end
 
+        if obj.seed >= 0
+            obj.randStream = RandStream('mt19937ar','seed',obj.seed);
+        else
+            obj.randStream = RandStream.getGlobalStream();
+            obj.seed = obj.randStream.Seed;
+        end
+
         % obj.trialTypes = vertcat(zeros(obj.numberOfChirps,1), ones(obj.numberOfFields,1), 2*ones(obj.numberOfBars,1));
-        % obj.trialTypes = obj.trialTypes(randperm(length(obj.trialTypes)));
+        % obj.trialTypes = obj.trialTypes(randperm(obj.randStream, length(obj.trialTypes)));
 
         devices = {};
         modes = {};
@@ -163,7 +194,7 @@ methods
                 'stimTime', obj.spotStimFrames / obj.frameRate,...
                 'tailTime', obj.spotTailFrames / obj.frameRate,...
                 'spotsPerEpoch', obj.numSpotsPerEpoch, ...
-                'spikeThreshold', obj.spikeThreshold, 'spikeDetectorMode', obj.spikeDetectorMode);
+                'spikeThreshold', obj.spikeThreshold, 'spikeDetectorMode', obj.spikeDetectorMode); 
 
         obj.logPrepareRun();
     end
@@ -174,20 +205,13 @@ methods
         % if obj.trialType == 1
         epoch.addParameter('trialType', 'field');
 
-        if obj.seed >= 0
-            s = RandStream('mt19937ar','seed',obj.seed);
-        else
-            s = RandStream.getGlobalStream();
-        end
-        epoch.addParameter('seed', s.Seed);
-
         if obj.gridMode
-            spots = randperm(s, size(obj.grid,1), obj.numSpotsPerEpoch);
+            spots = randperm(obj.randStream, size(obj.grid,1), obj.numSpotsPerEpoch);
             obj.cx = obj.grid(spots,1);
             obj.cy = obj.grid(spots,2);
         else
-            obj.cx = rand(s, obj.numSpotsPerEpoch, 1) * obj.extentX - obj.extentX/2;
-            obj.cy = rand(s, obj.numSpotsPerEpoch, 1) * obj.extentY - obj.extentY/2;
+            obj.cx = rand(obj.randStream, obj.numSpotsPerEpoch, 1) * obj.extentX - obj.extentX/2;
+            obj.cy = rand(obj.randStream, obj.numSpotsPerEpoch, 1) * obj.extentY - obj.extentY/2;
         end
 
         epoch.addParameter('cx', obj.cx);
