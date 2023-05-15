@@ -13,4 +13,5 @@ target/
 *.log
 logs/
 
+lib/
 *.mat
