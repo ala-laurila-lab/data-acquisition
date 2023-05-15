@@ -1,12 +1,12 @@
-classdef MockedLightCrafterDevice <  sa_labs.devices.LightCrafterDevice 
+classdef MockedLightCrafterDevice <  sa_labs.devices.LightCrafterDevice
+
     properties (Access = private)
         auto = false
         red = false
         green = false
         blue = true
         uv = false
-        current = 1;
-        
+        current = 1;        
     end
     
     methods
