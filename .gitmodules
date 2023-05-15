@@ -1,5 +1,5 @@
-[submodule "lib/sa-labs-extension"]
-	path = lib/sa-labs-extension
+[submodule ".lib/sa-labs-extension"]
+	path = .lib/sa-labs-extension
 	url = https://github.com/ala-laurila-lab/sa-labs-extension
 [submodule "lib/calibration-module"]
 	path = lib/calibration-module
