@@ -1,4 +1,4 @@
-classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice 
+classdef MockedLightCrafterDevice <  symphonyui.core.Device % sa_labs.devices.LightCrafterDevice 
     properties (Access = private)
         auto = false
         red = false
@@ -9,10 +9,58 @@ classdef MockedLightCrafterDevice < sa_labs.devices.LightCrafterDevice
         
     end
     
+    properties
+        stageClient
+        lightCrafter % TODO: this needs to be mocked
+    end
+    
     methods
         
         function obj = MockedLightCrafterDevice(varargin)
-            obj = obj@sa_labs.devices.LightCrafterDevice(varargin{:});
+%             obj = obj@sa_labs.devices.LightCrafterDevice(varargin{:});
+            ip = inputParser();
+            ip.addParameter('host', 'localhost', @ischar);
+            ip.addParameter('port', 5678, @isnumeric);
+            ip.addParameter('micronsPerPixel', @isnumeric);
+            ip.parse(varargin{:});
+            
+            cobj = Symphony.Core.UnitConvertingExternalDevice(['LightCrafter Stage@' ip.Results.host], 'Texas Instruments', Symphony.Core.Measurement(0, symphonyui.core.Measurement.UNITLESS));
+            obj@symphonyui.core.Device(cobj);
+            obj.cobj.MeasurementConversionTarget = symphonyui.core.Measurement.UNITLESS;
+            
+            obj.stageClient = stage.core.network.StageClient();
+            obj.stageClient.connect(ip.Results.host, ip.Results.port);
+            obj.stageClient.setMonitorGamma(1);
+            
+            trueCanvasSize = obj.stageClient.getCanvasSize();
+            canvasSize = [trueCanvasSize(1) * 2, trueCanvasSize(2)];
+            frameTrackerSize = [80,80];
+            frameTrackerPosition = [40,40];
+            
+            obj.stageClient.setCanvasProjectionIdentity();
+            obj.stageClient.setCanvasProjectionOrthographic(0, canvasSize(1), 0, canvasSize(2));
+            
+            obj.lightCrafter = [];
+            
+%             obj.lightCrafter = LightCrafter4500(obj.stageClient.getMonitorRefreshRate());
+%             obj.lightCrafter.connect();
+%             obj.lightCrafter.setMode('pattern');
+%             [auto, red, green, blue] = obj.lightCrafter.getLedEnables();
+            [auto, red, green, blue] = getLedEnables(obj);
+            monitorRefreshRate = obj.stageClient.getMonitorRefreshRate();
+            renderer = stage.builtin.renderers.PatternRenderer(1, 8);
+            obj.stageClient.setCanvasRenderer(renderer);
+            
+            obj.addConfigurationSetting('canvasSize', canvasSize, 'isReadOnly', true);
+            obj.addConfigurationSetting('trueCanvasSize', trueCanvasSize, 'isReadOnly', true);
+            obj.addConfigurationSetting('frameTrackerSize', frameTrackerSize);
+            obj.addConfigurationSetting('frameTrackerPosition', frameTrackerPosition);
+            obj.addConfigurationSetting('monitorRefreshRate', monitorRefreshRate, 'isReadOnly', true);
+            obj.addConfigurationSetting('prerender', false, 'isReadOnly', true);
+            obj.addConfigurationSetting('lightCrafterLedEnables',  [auto, red, green, blue], 'isReadOnly', true);
+            obj.addConfigurationSetting('lightCrafterPatternRate', 120, 'isReadOnly', true); %TODO: mock the pattern rate?
+            obj.addConfigurationSetting('micronsPerPixel', ip.Results.micronsPerPixel, 'isReadOnly', true);
+            obj.addConfigurationSetting('canvasTranslation', [0,0]);
         end
         
         function setLightCrafter(obj, ~, ~)
