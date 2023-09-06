@@ -29,7 +29,17 @@ classdef SimulatedRigWithStage < ala_laurila_lab.rigs.AaltoPatchRig
             obj.addAmplifier();
             obj.addProjector();
             obj.addOptometer();
-            obj.addFilterWheels();
+            obj.addFilterWheels();            
+            obj.addScanheadTrigger();
+        end
+
+        function addScanheadTrigger(obj)
+            import symphonyui.builtin.devices.*;
+            import symphonyui.core.*;
+            daq = obj.daqController;
+            scanhead = UnitConvertingDevice('Scanhead Trigger', Measurement.UNITLESS, 'manufacturer', 'Vidrio Technologies').bindStream(daq.getStream('doport0'));
+            daq.getStream('doport0').setBitPosition(scanhead, 1);
+            obj.addDevice(scanhead);
         end
         
         function addFilterWheels(obj)
