@@ -55,7 +55,17 @@ classdef AaltoPatchRig < symphonyui.core.descriptions.RigDescription
             obj.addRigSwitches();
             obj.addOscilloscopeTrigger();
             obj.addFilterWheels();
-            obj.addTempratureController();
+            obj.addTempratureController();          
+            obj.addScanheadTrigger();
+        end
+
+        function addScanheadTrigger(obj)
+            import symphonyui.builtin.devices.*;
+            import symphonyui.core.*;
+            daq = obj.daqController;
+            scanhead = UnitConvertingDevice('Scanhead Trigger', Measurement.UNITLESS, 'manufacturer', 'Vidrio Technologies').bindStream(daq.getStream('doport0'));
+            daq.getStream('doport0').setBitPosition(scanhead, 1);
+            obj.addDevice(scanhead);
         end
         
         function addTempratureController(obj)
