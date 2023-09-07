@@ -1,15 +1,6 @@
 classdef AaltoPatchRigOneAmp < ala_laurila_lab.rigs.AaltoPatchRig
 
     methods
-                
-        function prepareRigDescription(obj)
-            obj.addAmplifier();
-            obj.addProjector();
-            obj.addRigSwitches();
-            obj.addOscilloscopeTrigger();
-            obj.addFilterWheels();
-            obj.addTempratureController();
-        end
         
         function addAmplifier(obj)
             
