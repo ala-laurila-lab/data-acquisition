@@ -54,6 +54,7 @@ classdef RunWithMetadata < symphonyui.ui.Module
          
          function onRecord(obj, ~, ~)
              obj.protocol = feval(obj.acquisitionService.getSelectedProtocol());
+             obj.protocol.setRig(obj);
              d = obj.acquisitionService.getProtocolPropertyDescriptors();
              for i = d
                  if i.isReadOnly
@@ -65,7 +66,6 @@ classdef RunWithMetadata < symphonyui.ui.Module
              eg = obj.documentationService.getCurrentEpochGroup();
              stage = obj.configurationService.getDevice('Stage');
              
-             obj.protocol.setRig(obj);
              obj.protocol.prepareRun();
              tic;
              e = [];
@@ -98,7 +98,7 @@ classdef RunWithMetadata < symphonyui.ui.Module
                  
                  if ~isempty(last_e)
                      % plot/save i.flipDurations;
-                     output = struct('epochParameters',last_e.parameters,'protocolParameters',obj.protocol.getPropertyMap(), 'epochStartTime', last_tt, 'frameDuration', i.flipDurations, 'blockingTime', t);  %#ok<*NASGU>
+                     output = struct('protocol',class(obj.protocol),'epochParameters',last_e.parameters,'protocolParameters',obj.protocol.getPropertyMap(), 'epochStartTime', last_tt, 'frameDuration', i.flipDurations, 'blockingTime', t);  %#ok<*NASGU>
                      save(sprintf('%s%s%s_epoch.mat',obj.dir,filesep,last_tt) ,'-struct','output');
                  end
              end
@@ -109,7 +109,7 @@ classdef RunWithMetadata < symphonyui.ui.Module
              t = toc;
 
              obj.protocol.completeEpoch(last_e); %only works if no amp selected?
-             output = struct('epochParameters',e.parameters,'protocolParameters',obj.protocol.getPropertyMap(), 'epochStartTime', tt, 'frameDuration', i.flipDurations, 'blockingTime', t); 
+             output = struct('protocol',class(obj.protocol),'epochParameters',e.parameters,'protocolParameters',obj.protocol.getPropertyMap(), 'epochStartTime', tt, 'frameDuration', i.flipDurations, 'blockingTime', t); 
              save(sprintf('%s%s%s_epoch.mat',obj.dir,filesep,tt) ,'-struct','output');
 
              obj.protocol.completeRun();
