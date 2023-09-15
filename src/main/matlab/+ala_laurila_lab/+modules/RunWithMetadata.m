@@ -63,8 +63,9 @@ classdef RunWithMetadata < symphonyui.ui.Module
                  obj.protocol.(i.name) = i.value;
              end
              
-             eg = obj.documentationService.getCurrentEpochGroup();
-             stage = obj.configurationService.getDevice('Stage');
+%              eg = obj.documentationService.getCurrentEpochGroup();
+             stage = obj.getDevice('Stage');
+             temp = obj.getDevices('Temperature Controller');
              
              obj.protocol.prepareRun();
              tic;
@@ -76,6 +77,9 @@ classdef RunWithMetadata < symphonyui.ui.Module
                  last_e = e;
                  e = symphonyui.core.Epoch('test-epoch');
                  obj.protocol.prepareEpoch(e);
+                 if ~isempty(temp) && e.hasResponse(temp{1})
+                     e.removeResponse(temp);
+                 end
 
                  pr = obj.protocol.createPresentation();
                  
@@ -109,6 +113,9 @@ classdef RunWithMetadata < symphonyui.ui.Module
              t = toc;
 
              obj.protocol.completeEpoch(last_e); %only works if no amp selected?
+             if ~isempty(temp) && e.hasResponse(temp{1})
+                 e.removeResponse(temp);
+             end
              output = struct('protocol',class(obj.protocol),'epochParameters',e.parameters,'protocolParameters',obj.protocol.getPropertyMap(), 'epochStartTime', tt, 'frameDuration', i.flipDurations, 'blockingTime', t); 
              save(sprintf('%s%s%s_epoch.mat',obj.dir,filesep,tt) ,'-struct','output');
 
